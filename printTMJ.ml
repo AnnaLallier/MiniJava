@@ -21,6 +21,8 @@ let binop out = function
      fprintf out "-"
   | OpMul ->
      fprintf out "*"
+  | OpDiv ->
+     fprintf out "/"
   | OpLt  ->
      fprintf out "<"
   | OpAnd ->

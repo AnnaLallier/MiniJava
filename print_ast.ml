@@ -77,6 +77,8 @@ let print_binop out = function
      fprintf out "OpSub"
   | OpMul ->
      fprintf out "OpMul"
+  | OpDiv ->
+     fprintf out "OpDiv"
   | OpLt  ->
      fprintf out "OpLt"
   | OpGt -> 

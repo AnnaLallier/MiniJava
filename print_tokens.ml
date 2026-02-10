@@ -48,11 +48,13 @@ let print_token show_loc out = function
      fprintf out "MINUS"
   | TIMES ->
      fprintf out "TIMES"
+  | DIV ->
+     fprintf out "DIV"  
   | NOT ->
      fprintf out "NOT"
   | LT ->
      fprintf out "LT"
-   | GT -> 
+  | GT -> 
      fprintf out "GT"
   | AND ->
      fprintf out "AND"

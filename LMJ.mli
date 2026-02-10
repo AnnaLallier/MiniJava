@@ -30,6 +30,7 @@ and binop =
   | OpAdd (** Binary operator [+]. *)
   | OpSub (** Binary operator [-]. *)
   | OpMul (** Binary operator [*]. *)
+  | OpDiv (** Binary operator [/]. *)
   | OpLt  (** Binary operator [<]. *)
   | OpGt  (** Binary operator [>]. *)
   | OpAnd (** Binary operator [&&]. *)
