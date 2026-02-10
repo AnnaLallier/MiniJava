@@ -59,6 +59,7 @@ Et après tout ça, on peut make, et on peut faire
 Liste de choses à faire : 
 
     >
+    ||
     ^
     /
     &
