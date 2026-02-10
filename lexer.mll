@@ -28,6 +28,7 @@ rule get_token = parse
   | '+'       { PLUS }
   | '-'       { MINUS }
   | '*'       { TIMES }
+  | '/'       { DIV }
   | "&&"      { AND }
   | "<"       { LT }
   |  ">"       { GT }
