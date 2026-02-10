@@ -2,6 +2,8 @@
 
 ### Le  10/02/2026
 
+## La config de l'enfer
+
 J'ai fork à partir de  https://github.com/lascar-pacagi/MiniJava
 
 J'ai cloné mon fork, j'ai installé les dépendances, puis en branche ast_typed,  puis modifié la ligne 105 du fichier main.ml
@@ -22,6 +24,7 @@ Puis
 
 Et enfin on a du vert partout youpi
 
+## Rajout de GT >
 
 Après on a rajouté OpGt dns TMJ et LMJ
 
@@ -30,7 +33,41 @@ Après on a rajouté OpGt dns TMJ et LMJ
 
 On a modifié plein de fichiers pour ajouter le support de GT, et on a rajouté un test TestGt.java qui utilise GT, et qui est dans test/good, et qui passe aussi.
 
+A chaque fois, il faut modifier l'affichage dans printTMJ.ml, au début et dans les expressions plus bas également.
+
+Ensuite make clean, make, et Ocaml ajoute des warning en fonction de ce qu'il faut corriger (ex, dans print_ast, )
+
+_Sinon on peut commenter les lignes 99 à 101 de main.ml pour éviter de le faire :_
+
+    Printf.fprintf output "/*\n";
+    PrintTMJ.print_program output tmj;
+    Printf.fprintf output "*/\n";
+
 Et après tout ça, on peut make, et on peut faire 
 
     test/test.sh -a
 
+
+## Instructions
+
+Liste de choses à faire : 
+
+    >
+    ^
+    /
+    &
+    |
+    == 
+    if sans else
+    for 
+    do ... while
+    
+    float
+    string
+    interface
+    surcharge
+    sysout
+
+    return 
+    break 
+    continue
