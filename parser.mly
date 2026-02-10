@@ -8,7 +8,7 @@
 %token INTEGER BOOLEAN
 %token <string Location.t> IDENT
 %token CLASS PUBLIC STATIC VOID MAIN STRING EXTENDS RETURN
-%token PLUS MINUS TIMES NOT LT AND GT 
+%token PLUS MINUS TIMES NOT LT AND GT OR
 %token COMMA SEMICOLON
 %token ASSIGN
 %token LPAREN RPAREN LBRACKET RBRACKET LBRACE RBRACE
@@ -17,13 +17,17 @@
 %token IF ELSE WHILE
 %token EOF
 
+
+(* Ordre de priorité : Le moins prioritaire*)
+%left OR
 %left AND
 %nonassoc LT
 %nonassoc GT
 %left PLUS MINUS
 %left TIMES
 %nonassoc NOT
-%nonassoc DOT LBRACKET
+%nonassoc DOT LBRACKET 
+(* Le plus prioritaire*)
 
 %start program
 
@@ -149,6 +153,8 @@ raw_expression:
 | LT    { OpLt }
 | GT    { OpGt }
 | AND   { OpAnd }
+| OR    { OpOr }
+
 
 instruction:
 | b = block

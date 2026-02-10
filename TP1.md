@@ -2,6 +2,12 @@
 
 ### Le  10/02/2026
 
+## Références
+
+https://introcs.cs.princeton.edu/java/11precedence/
+
+https://docs.oracle.com/javase/specs/jls/se25/html/index.html
+
 ## La config de l'enfer
 
 J'ai fork à partir de  https://github.com/lascar-pacagi/MiniJava
@@ -56,7 +62,7 @@ Liste de choses à faire :
     ^
     /
     &
-    |
+    | (bitwise inclusive OR)
     == 
     if sans else
     for 
@@ -71,3 +77,14 @@ Liste de choses à faire :
     return 
     break 
     continue
+
+
+## Ajout de ||
+
+- LMJ : ajout de OpOr dans le type binop
+- TMJ : ajout de OpOr dans le type binop
+- parser.mly : ajout de OR dans inline binop
+- typechecking.ml : ajout de OpOr dans les expressions binaires, avec des types booléens + token + priorités
+- Ajout de TestOr.java dans test/good, qui utilise ||
+- lexer.mll : "||"      { OR }
+
