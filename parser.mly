@@ -20,11 +20,9 @@
 
 (* Ordre de priorité : Le moins prioritaire*)
 %left EQUALS
-%left OR
-%left AND
-%left BITOR
-%left BITOREX
 %left BITWISEAND
+%left BITOREX
+%left BITOR
 %left AND 
 %left OR
 %nonassoc LT GT
