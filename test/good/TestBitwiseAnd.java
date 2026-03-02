@@ -1,0 +1,9 @@
+class TestBitwiseAnd {
+    public static void main(String[] args) {
+        if (true & true) {
+            System.out.println(1) ;
+        } else {
+            System.out.println(0) ;
+        }
+    }
+}

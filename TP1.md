@@ -2,11 +2,15 @@
 
 ### Le  10/02/2026
 
+Environ 5 points au DS. Mieux vaut faire jusqu'à if sans else, chaînes de caractères, opérateurs associés, etc.
+
 ## Références
 
 https://introcs.cs.princeton.edu/java/11precedence/
 
 https://docs.oracle.com/javase/specs/jls/se25/html/index.html
+
+https://blog.paumard.org/cours/java/chap05-noms-operateurs-operateurs.html
 
 ## La config de l'enfer
 
@@ -51,6 +55,8 @@ _Sinon on peut commenter les lignes 99 à 101 de main.ml pour éviter de le fair
 
 Et après tout ça, on peut make, et on peut faire 
 
+    make
+    
     test/test.sh -a
 
 
@@ -64,7 +70,7 @@ Liste de choses à faire :
     /
     &
     | (bitwise inclusive OR)
-    == 
+    ==  (utiliser compatible)
     if sans else
     for 
     do ... while
@@ -85,8 +91,8 @@ Liste de choses à faire :
 
 - LMJ : ajout de OpOr dans le type binop
 - TMJ : ajout de OpOr dans le type binop
-- parser.mly : ajout de OR dans inline binop
-- typechecking.ml : ajout de OpOr dans les expressions binaires, avec des types booléens + token + priorités
+- parser.mly : ajout de OR dans inline binop  + token + priorités (en haut du fichier)
+- typechecking.ml : ajout de OpOr dans les expressions binaires, avec des types booléens
 - Ajout de TestOr.java dans test/good, qui utilise ||
 - lexer.mll : "||"      { OR }
 

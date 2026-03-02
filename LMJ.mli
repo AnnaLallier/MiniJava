@@ -35,6 +35,7 @@ and binop =
   | OpGt  (** Binary operator [>]. *)
   | OpAnd (** Binary operator [&&]. *)
   | OpOr  (** Binary operator [||]. *)
+  | OpBitwiseAnd (** Binary operator [&]. *)
 
 and unop = UOpNot (** Unary operator [!]. *)
 
