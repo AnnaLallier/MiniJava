@@ -36,6 +36,7 @@ and binop =
   | OpAnd (** Binary operator [&&]. *)
   | OpOr  (** Binary operator [||]. *)
   | OpOrBit  (** Binary operator [|]. *)
+  | OpOrBitEx  (** Binary operator [^]. *)
   | OpBitwiseAnd (** Binary operator [&]. *)
 
 and unop = UOpNot (** Unary operator [!]. *)
