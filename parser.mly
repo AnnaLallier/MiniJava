@@ -21,10 +21,10 @@
 (* Ordre de priorité : Le moins prioritaire*)
 %left OR
 %left AND
+%left BITOR
 %nonassoc LT GT
 %left PLUS MINUS 
 %left TIMES DIV
-%left BITOR
 %nonassoc NOT
 %nonassoc DOT LBRACKET 
 (* Le plus prioritaire*)
@@ -155,7 +155,7 @@ raw_expression:
 | GT    { OpGt }
 | AND   { OpAnd }
 | OR    { OpOr }
-| BITOR { OpOrbit }
+| BITOR { OpOrBit }
 
 
 

@@ -307,6 +307,7 @@ let binop2c
   | OpOrBit -> fprintf out "|"
 
 
+
 (** [type2c out typ] transpiles the type [typ] to C on the output channel [out]. *)
 let type2c
       out

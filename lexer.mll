@@ -33,7 +33,7 @@ rule get_token = parse
   | "||"      { OR }
   | "|"       { BITOR }
   | "<"       { LT }
-  |  ">"      { GT }
+  | ">"       { GT }
   | '('       { LPAREN }
   | ')'       { RPAREN }
   | '['       { LBRACKET }
