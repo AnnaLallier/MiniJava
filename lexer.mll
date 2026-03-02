@@ -30,6 +30,7 @@ rule get_token = parse
   | '*'       { TIMES }
   | '/'       { DIV }
   | "&&"      { AND }
+  | '&'       { BITWISEAND }
   | "||"      { OR }
   | "|"       { BITOR }
   | "<"       { LT }

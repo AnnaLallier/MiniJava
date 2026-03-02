@@ -8,7 +8,7 @@
 %token INTEGER BOOLEAN
 %token <string Location.t> IDENT
 %token CLASS PUBLIC STATIC VOID MAIN STRING EXTENDS RETURN
-%token PLUS MINUS TIMES NOT LT AND GT OR DIV BITOR
+%token PLUS MINUS TIMES NOT LT AND GT OR DIV BITWISEAND BITOR
 %token COMMA SEMICOLON
 %token ASSIGN
 %token LPAREN RPAREN LBRACKET RBRACKET LBRACE RBRACE
@@ -22,6 +22,7 @@
 %left OR
 %left AND
 %left BITOR
+%left BITWISEAND
 %nonassoc LT GT
 %left PLUS MINUS 
 %left TIMES DIV
@@ -155,6 +156,7 @@ raw_expression:
 | GT    { OpGt }
 | AND   { OpAnd }
 | OR    { OpOr }
+| BITWISEAND { OpBitwiseAnd }
 | BITOR { OpOrBit }
 
 
