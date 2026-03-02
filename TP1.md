@@ -69,8 +69,8 @@ Liste de choses à faire :
     ^
     /
     &
-    | (bitwise inclusive OR)
-    ==  (utiliser compatible)
+    | (bitwise inclusive OR)  (fait)
+    ==  (utiliser compatible) (fait)
     if sans else
     for 
     do ... while
@@ -91,8 +91,18 @@ Liste de choses à faire :
 
 - LMJ : ajout de OpOr dans le type binop
 - TMJ : ajout de OpOr dans le type binop
-- parser.mly : ajout de OR dans inline binop  + token + priorités (en haut du fichier)
+- parser.mly : ajout de OR dans token + priorités (en haut du fichier) + inline binop
 - typechecking.ml : ajout de OpOr dans les expressions binaires, avec des types booléens
-- Ajout de TestOr.java dans test/good, qui utilise ||
 - lexer.mll : "||"      { OR }
+- mj2.ml en dessous de binop2c
+- Ajout de TestOr.java dans test/good, qui utilise ||
 
+A chaque fois qu'on ajoute quelque chose, pour tester on fait
+
+    make
+    test/test.sh -a
+
+Quand ça en marche pas, il est utile de faire 
+
+    ./mini-java ./test/good/TestEquals.java 
+    Fatal error: exception File "mj2c.ml", line 298, characters 2-7: Pattern matching failed

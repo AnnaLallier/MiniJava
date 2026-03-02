@@ -31,6 +31,7 @@ and binop = LMJ.binop =
   | OpAnd
   | OpOr
   | OpBitwiseAnd
+  | OpEquals
 
 and unop = LMJ.unop = UOpNot
 

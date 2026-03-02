@@ -171,6 +171,13 @@ and typecheck_expression (cenv : class_env) (venv : variable_env) (vinit : S.t)
       let e2' = typecheck_expression cenv venv vinit instanceof  e2 in
       if e1'.typ <> e2'.typ then error e (sprintf "Type mismatch in bitwise and, expected both operands to have the same type, got %s and %s" (tmj_type_to_string e1'.typ) (tmj_type_to_string e2'.typ));
       mke (TMJ.EBinOp (OpBitwiseAnd, e1', e2')) (type_tmj_to_lmj (Location.startpos e) (Location.endpos e) e1'.typ)
+  | EBinOp (OpEquals, e1, e2) ->
+      let e1' = typecheck_expression cenv venv vinit instanceof  e1 in
+      let e2' = typecheck_expression cenv venv vinit instanceof  e2 in
+      if not (compatible (type_tmj_to_lmj (Location.startpos e) (Location.endpos e) e1'.typ) (type_tmj_to_lmj (Location.startpos e) (Location.endpos e) e2'.typ) instanceof) then
+        if not (compatible (type_tmj_to_lmj (Location.startpos e) (Location.endpos e) e2'.typ) (type_tmj_to_lmj (Location.startpos e) (Location.endpos e) e1'.typ) instanceof) then
+          error e (sprintf "Type mismatch in equals, expected both operands to have compatible types, got %s and %s" (tmj_type_to_string e1'.typ) (tmj_type_to_string e2'.typ));
+      mke (TMJ.EBinOp (OpEquals, e1', e2')) TypBool
   | EBinOp (op, e1, e2) ->
       let expected, returned =
         match op with
