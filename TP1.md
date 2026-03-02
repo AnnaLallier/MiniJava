@@ -64,12 +64,12 @@ Et après tout ça, on peut make, et on peut faire
 
 Liste de choses à faire : 
 
-    >
-    ||
-    ^
-    /
-    &
-    | (bitwise inclusive OR)  (fait)
+    > (fait)
+    || (fait)
+    ^ (fait)
+    / (fait)
+    & (fait)
+    | (bitwise inclusive OR) 
     ==  (utiliser compatible) (fait)
     if sans else
     for 

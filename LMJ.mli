@@ -35,6 +35,8 @@ and binop =
   | OpGt  (** Binary operator [>]. *)
   | OpAnd (** Binary operator [&&]. *)
   | OpOr  (** Binary operator [||]. *)
+  | OpOrBit  (** Binary operator [|]. *)
+  | OpOrBitEx  (** Binary operator [^]. *)
   | OpBitwiseAnd (** Binary operator [&]. *)
   | OpEquals (** Binary operator [==]. *)
 

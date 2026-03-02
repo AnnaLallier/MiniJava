@@ -30,6 +30,8 @@ and binop = LMJ.binop =
   | OpGt
   | OpAnd
   | OpOr
+  | OpOrBit 
+  | OpOrBitEx
   | OpBitwiseAnd
   | OpEquals
 

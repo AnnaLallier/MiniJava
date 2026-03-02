@@ -304,6 +304,8 @@ let binop2c
   | OpGt -> fprintf out ">"
   | OpAnd -> fprintf out "&&"
   | OpOr -> fprintf out "||"
+  | OpOrBit -> fprintf out "|"
+  | OpOrBitEx -> fprintf out "^"
   | OpBitwiseAnd -> fprintf out "&"
   | OpEquals -> fprintf out "=="
 
