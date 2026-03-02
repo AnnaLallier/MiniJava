@@ -31,8 +31,9 @@ rule get_token = parse
   | '/'       { DIV }
   | "&&"      { AND }
   | "||"      { OR }
+  | "|"       { BITOR }
   | "<"       { LT }
-  |  ">"       { GT }
+  |  ">"      { GT }
   | '('       { LPAREN }
   | ')'       { RPAREN }
   | '['       { LBRACKET }
