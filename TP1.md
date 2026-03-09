@@ -69,9 +69,9 @@ Liste de choses à faire :
     ^ (fait)
     / (fait)
     & (fait)
-    | (bitwise inclusive OR) 
+    | (bitwise inclusive OR) (fait)
     ==  (utiliser compatible) (fait)
-    if sans else
+    if sans else (fait)
     for 
     do ... while
     
