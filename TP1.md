@@ -97,6 +97,10 @@ Liste de choses à faire :
 - mj2.ml en dessous de binop2c
 - Ajout de TestOr.java dans test/good, qui utilise ||
 
+## Ajout de float
+
+- parser.mly : ajout de FLOAT_CONST dans les tokens, et dans les expressions
+
 A chaque fois qu'on ajoute quelque chose, pour tester on fait
 
     make

@@ -19,6 +19,8 @@
 
 
 (* Ordre de priorité : Le moins prioritaire*)
+%nonassoc NOELSE
+%nonassoc ELSE
 %left EQUALS
 %left BITWISEAND
 %left BITOREX
@@ -181,7 +183,7 @@ instruction:
 | IF LPAREN c = expression RPAREN i1 = instruction ELSE i2 = instruction
    { IIf (c, i1, i2) }
 
-| IF LPAREN c = expression RPAREN i1 = instruction 
+| IF LPAREN c = expression RPAREN i1 = instruction %prec NOELSE
     { IIf (c, i1, IBlock[]) }
 
 | WHILE LPAREN c = expression RPAREN i = instruction
