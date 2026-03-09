@@ -73,7 +73,7 @@ Liste de choses à faire :
     ==  (utiliser compatible) (fait)
     if sans else
     for (fait)
-    do ... while
+    do ... while (fait)
     
     float
     string
