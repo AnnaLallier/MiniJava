@@ -72,7 +72,7 @@ Liste de choses à faire :
     | (bitwise inclusive OR) 
     ==  (utiliser compatible) (fait)
     if sans else
-    for 
+    for (fait)
     do ... while
     
     float
