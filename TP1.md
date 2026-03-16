@@ -72,10 +72,10 @@ Liste de choses à faire :
     | (bitwise inclusive OR) (fait)
     ==  (utiliser compatible) (fait)
     if sans else (fait)
-    for 
-    do ... while
+    for (fait)
+    do ... while (fait)
     
-    float
+    float (fait)
     string
     interface
     surcharge
