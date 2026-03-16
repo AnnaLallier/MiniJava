@@ -58,6 +58,7 @@ let clookup : identifier -> class_env -> class_type = lookup "class"
 let rec compatible (typ1 : typ) (typ2 : typ) (instanceof : identifier -> identifier -> bool) : bool =
   match typ1, typ2 with
   | TypInt, TypInt
+  | TypFloat, TypFloat
   | TypBool, TypBool
   | TypIntArray, TypIntArray -> true
   | Typ t1, Typ t2 -> instanceof t1 t2
@@ -66,6 +67,7 @@ let rec compatible (typ1 : typ) (typ2 : typ) (instanceof : identifier -> identif
 (** [typ_lmj_to_tmj t] converts the [LMJ] type [t] into the equivalent [TMJ] type. *)
 let rec type_lmj_to_tmj = function
   | TypInt      -> TMJ.TypInt
+  | TypFloat    -> TMJ.TypFloat
   | TypBool     -> TMJ.TypBool
   | TypIntArray -> TMJ.TypIntArray
   | Typ id      -> TMJ.Typ (Location.content id)
@@ -73,6 +75,7 @@ let rec type_lmj_to_tmj = function
 (** [typ_tmj_to_lmj s e t] converts the [TMJ] type [t] into the equivalent [LMJ] type using location starting position [s] and location ending position [e]. *)
 let rec type_tmj_to_lmj startpos endpos = function
 | TMJ.TypInt      -> TypInt
+| TMJ.TypFloat    -> TypFloat
 | TMJ.TypBool     -> TypBool
 | TMJ.TypIntArray -> TypIntArray
 | TMJ.Typ id      -> Typ (Location.make startpos endpos id)
@@ -80,6 +83,7 @@ let rec type_tmj_to_lmj startpos endpos = function
 (** [tmj_type_to_string t] converts the [TMJ] type [t] into a string representation. *)
 let rec tmj_type_to_string : TMJ.typ -> string = function
   | TMJ.TypInt -> "integer"
+  | TMJ.TypFloat -> "float"
   | TMJ.TypBool -> "boolean"
   | TMJ.TypIntArray -> "int[]"
   | TMJ.Typ t -> t
@@ -150,6 +154,10 @@ and typecheck_expression (cenv : class_env) (venv : variable_env) (vinit : S.t)
 
   | EConst (ConstInt i) ->
       mke (TMJ.EConst (ConstInt i)) TypInt
+
+  | EConst (ConstFloat f) ->
+      mke (TMJ.EConst (ConstFloat f)) TypFloat
+
 
   | EGetVar v ->
      let typ = vlookup v venv in
