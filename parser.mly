@@ -5,7 +5,8 @@
 
 %token <int32> INT_CONST
 %token <bool> BOOL_CONST
-%token INTEGER BOOLEAN
+%token <float> FLOAT_CONST
+%token INTEGER BOOLEAN FLOAT
 %token <string Location.t> IDENT
 %token CLASS PUBLIC STATIC VOID MAIN STRING EXTENDS RETURN
 %token PLUS MINUS TIMES NOT LT AND GT OR DIV BITWISEAND EQUALS BITOR BITOREX
@@ -121,6 +122,9 @@ raw_expression:
 | i = INT_CONST
    { EConst (ConstInt i) }
 
+| f = FLOAT_CONST
+   { EConst (ConstFloat f) }
+
 | b = BOOL_CONST
    { EConst (ConstBool b) }
 
@@ -196,6 +200,8 @@ block:
 typ:
 | INTEGER
    { TypInt }
+| FLOAT
+   { TypFloat }
 | BOOLEAN
    { TypBool }
 | INTEGER LBRACKET RBRACKET

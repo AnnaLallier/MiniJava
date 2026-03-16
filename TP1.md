@@ -99,7 +99,12 @@ Liste de choses à faire :
 
 ## Ajout de float
 
-- parser.mly : ajout de FLOAT_CONST dans les tokens, et dans les expressions
+- parser.mly : ajout de FLOAT_CONST dans les tokens, et dans les expressions, et en typ
+- typechecking.ml : je me suis arrêtée en ligne 210, mais il y a plein de choses...
+- lexer.mll
+float of string à utiliser
+
+Dans typechecking, adapter OpDiv & OpMult d'une façon similaire à ce qu'on a fait pour les opérateurs bit à bit.
 
 A chaque fois qu'on ajoute quelque chose, pour tester on fait
 

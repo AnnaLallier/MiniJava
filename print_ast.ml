@@ -63,6 +63,8 @@ let print_constant out = function
      fprintf out "ConstBool %s" (string_of_bool b)
   | ConstInt i ->
      fprintf out "ConstInt %ld" i
+  | ConstFloat f ->
+     fprintf out "ConstFloat %f" f
 
 (** [print_unop out op] prints the unary operator [op] on the output channel [out]. *)
 let print_unop out = function

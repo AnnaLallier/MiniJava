@@ -12,6 +12,8 @@ let ltriangle = "\xe2\x97\x82"
 let print_token show_loc out = function
   | INT_CONST i ->
      fprintf out "INT_CONST %s%ld%s" lquote i rquote
+  | FLOAT_CONST f ->
+     fprintf out "FLOAT_CONST %s%f%s" lquote f rquote
   | BOOL_CONST b ->
      fprintf out "BOOL_CONST %s%s%s" lquote (string_of_bool b) rquote
   | INTEGER ->
