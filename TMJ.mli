@@ -20,6 +20,7 @@ and raw_expression =
 and constant = LMJ.constant =
   | ConstBool of bool
   | ConstInt of int32
+  | ConstFloat of float
   | ConstString of string
 
 and binop = LMJ.binop =
@@ -50,6 +51,7 @@ and instruction =
 
 and typ =
   | TypInt
+  | TypFloat
   | TypString
   | TypBool
   | TypIntArray

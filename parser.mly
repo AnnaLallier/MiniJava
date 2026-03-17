@@ -6,7 +6,8 @@
 %token <int32> INT_CONST
 %token <string> STRING_CONST
 %token <bool> BOOL_CONST
-%token INTEGER BOOLEAN
+%token <float> FLOAT_CONST
+%token INTEGER BOOLEAN FLOAT
 %token <string Location.t> IDENT
 %token CLASS PUBLIC STATIC VOID MAIN STRING EXTENDS RETURN
 %token PLUS MINUS TIMES NOT LT AND GT OR DIV BITWISEAND EQUALS BITOR BITOREX
@@ -20,6 +21,8 @@
 
 
 (* Ordre de priorité : Le moins prioritaire*)
+%nonassoc NOELSE
+%nonassoc ELSE
 %left EQUALS
 %left BITWISEAND
 %left BITOREX
@@ -120,6 +123,9 @@ raw_expression:
 | i = INT_CONST
    { EConst (ConstInt i) }
 
+| f = FLOAT_CONST
+   { EConst (ConstFloat f) }
+
 | s = STRING_CONST
    { EConst (ConstString s) }
 
@@ -188,6 +194,9 @@ instruction:
 | IF LPAREN c = expression RPAREN i1 = instruction ELSE i2 = instruction
    { IIf (c, i1, i2) }
 
+| IF LPAREN c = expression RPAREN i1 = instruction %prec NOELSE
+    { IIf (c, i1, IBlock[]) }
+
 | WHILE LPAREN c = expression RPAREN i = instruction
    { IWhile (c, i) }
 
@@ -204,6 +213,8 @@ block:
 typ:
 | INTEGER
    { TypInt }
+| FLOAT
+   { TypFloat }
 | STRING
    { TypString }
 | BOOLEAN

@@ -25,6 +25,7 @@ and raw_expression =
 and constant =
   | ConstBool of bool (** Boolean constant [true] or [false]. *)
   | ConstInt of int32 (** Integer constant [[-2^31, 2^31 - 1]]. *)
+  | ConstFloat of float (** Float constant. *)
   | ConstString of string (** String constant []. *)
 
 and binop =
@@ -55,6 +56,7 @@ and instruction =
 
 and typ =
   | TypInt (** Type [int]. *)
+  | TypFloat (** Type [float]. *)
   | TypString (** Type [string]. *)
   | TypBool (** Type [bool]. *)
   | TypIntArray (** Type [int[]]. *)

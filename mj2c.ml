@@ -289,6 +289,7 @@ let constant2c
   | ConstBool true  -> fprintf out "1"
   | ConstBool false -> fprintf out "0"
   | ConstInt i      -> fprintf out "%ld" i
+  | ConstFloat f    -> fprintf out "%f" f
   | ConstString s      -> fprintf out "%s" s
 
 (** [binop2c out op] transpiles the binary operator [op] to C on the output channel [out]. *)
@@ -317,6 +318,7 @@ let type2c
     : unit =
   match typ with
   | TypInt -> fprintf out "int"
+  | TypFloat -> fprintf out "float"
   | TypString -> fprintf out "String"
   | TypBool -> fprintf out "int"
   | TypIntArray -> fprintf out "struct %s*" !struct_array_name

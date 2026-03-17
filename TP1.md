@@ -69,9 +69,9 @@ Liste de choses à faire :
     ^ (fait)
     / (fait)
     & (fait)
-    | (bitwise inclusive OR) 
+    | (bitwise inclusive OR) (fait)
     ==  (utiliser compatible) (fait)
-    if sans else
+    if sans else (fait)
     for (fait)
     do ... while (fait)
     
@@ -96,6 +96,15 @@ Liste de choses à faire :
 - lexer.mll : "||"      { OR }
 - mj2.ml en dessous de binop2c
 - Ajout de TestOr.java dans test/good, qui utilise ||
+
+## Ajout de float
+
+- parser.mly : ajout de FLOAT_CONST dans les tokens, et dans les expressions, et en typ
+- typechecking.ml : je me suis arrêtée en ligne 210, mais il y a plein de choses...
+- lexer.mll
+float of string à utiliser
+
+Dans typechecking, adapter OpDiv & OpMult d'une façon similaire à ce qu'on a fait pour les opérateurs bit à bit.
 
 A chaque fois qu'on ajoute quelque chose, pour tester on fait
 
