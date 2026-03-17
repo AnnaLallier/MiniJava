@@ -75,8 +75,8 @@ Liste de choses à faire :
     for (fait)
     do ... while (fait)
     
-    float
-    string
+    float (fait)
+    string (fait)
     interface
     surcharge
     sysout

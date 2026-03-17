@@ -4,6 +4,7 @@
 %}
 
 %token <int32> INT_CONST
+%token <string> STRING_CONST
 %token <bool> BOOL_CONST
 %token INTEGER BOOLEAN
 %token <string Location.t> IDENT
@@ -119,6 +120,9 @@ raw_expression:
 | i = INT_CONST
    { EConst (ConstInt i) }
 
+| s = STRING_CONST
+   { EConst (ConstString s) }
+
 | b = BOOL_CONST
    { EConst (ConstBool b) }
 
@@ -135,6 +139,9 @@ raw_expression:
    { EArrayGet (a, i) }
 
 | NEW INTEGER LBRACKET e = expression RBRACKET
+   { EArrayAlloc e }
+
+| NEW STRING LBRACKET e = expression RBRACKET
    { EArrayAlloc e }
 
 | a = expression DOT LENGTH
@@ -197,9 +204,13 @@ block:
 typ:
 | INTEGER
    { TypInt }
+| STRING
+   { TypString }
 | BOOLEAN
    { TypBool }
 | INTEGER LBRACKET RBRACKET
    { TypIntArray }
+| STRING LBRACKET RBRACKET
+   { TypStringArray }
 | id = IDENT
    { Typ id }

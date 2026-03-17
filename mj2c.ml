@@ -289,6 +289,7 @@ let constant2c
   | ConstBool true  -> fprintf out "1"
   | ConstBool false -> fprintf out "0"
   | ConstInt i      -> fprintf out "%ld" i
+  | ConstString s      -> fprintf out "%s" s
 
 (** [binop2c out op] transpiles the binary operator [op] to C on the output channel [out]. *)
 let binop2c
@@ -316,8 +317,10 @@ let type2c
     : unit =
   match typ with
   | TypInt -> fprintf out "int"
+  | TypString -> fprintf out "String"
   | TypBool -> fprintf out "int"
   | TypIntArray -> fprintf out "struct %s*" !struct_array_name
+  | TypStringArray -> fprintf out "struct %s*" !struct_array_name
   | Typ t -> fprintf out "struct %s*" t
 
 (** [cast out typ] transpiles the cast to [typ] to C on the output channel [out]. *)
@@ -491,8 +494,12 @@ let instr2c
          (indent indentation (sep_list nl instr2c)) is
          nl
 
-    | ISyso e ->
-       fprintf out "printf(\"%%d\\n\", %a);"
+    | ISyso e -> (match e.typ with
+                      | TypBool -> fprintf out "if (%a) printf(\"true\\n\"); else printf(\"false\\n\");"
+                      | TypInt -> fprintf out "printf(\"%%d\\n\", %a);"
+                      | TypString -> fprintf out "printf(\"%%s\\n\", %a);"
+                      | TypStringArray -> fprintf out "printf(\"%%p\\n\", %a);"
+                      | TypIntArray -> fprintf out "printf(\"%%p\\n\", %a);" (*verifier %p pour pointeur*))
          (expr2c method_name class_info) e
   in
   instr2c out ins

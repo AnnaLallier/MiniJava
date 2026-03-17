@@ -19,6 +19,7 @@ let integer = digit+
 let space = [' ' '\t' '\r']
 let letter = ['a'-'z''A'-'Z''_']
 let ident = letter (digit | letter)*
+let string = ['"'] (digit | letter)* ['"']
 
 rule get_token = parse
   | "//" [^ '\n']* '\n'
@@ -49,6 +50,7 @@ rule get_token = parse
   | ","       { COMMA }
   | "true"    { BOOL_CONST true }
   | "false"   { BOOL_CONST false }
+  | string as s  { STRING_CONST s }
   | "int"     { INTEGER }
   | "boolean" { BOOLEAN }
   | "!"       { NOT }

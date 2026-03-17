@@ -11,13 +11,13 @@ type expression = raw_expression Location.t
 
 (** An expression without position informations. *)
 and raw_expression =
-  | EConst of constant (** A integer or boolean constant. *)
+  | EConst of constant (** A integer or boolean or string constant. *)
   | EGetVar of identifier (** Get the value of a variable. *)
   | EUnOp of unop * expression (** An unary operator. *)
   | EBinOp of binop * expression * expression (** [EBinOp (op, e1, e2)] represents the expression [e1 op e2]. *)
   | EMethodCall of expression * identifier * expression list (** [EMethodCall (o, id, [p1, ..., pn])] represents the call [o.id(p1, ..., pn)]. *)
   | EArrayGet of expression * expression (** [EArrayGet (e1, e2)] represents the expression [e1[e2]]. *)
-  | EArrayAlloc of expression (** [EArrayAlloc e] represents the expression [new int[e]]. *)
+  | EArrayAlloc of expression (** [EArrayAlloc e] represents the expression [new int[e]] or [new string[e]]. *)
   | EArrayLength of expression (** [EArrayLength e] represents the expression [e.length]. *)
   | EThis (** [EThis] represents the expression [this]. *)
   | EObjectAlloc of identifier (** [EObjectAlloc id] represents the expression [new id()]. *)
@@ -25,6 +25,7 @@ and raw_expression =
 and constant =
   | ConstBool of bool (** Boolean constant [true] or [false]. *)
   | ConstInt of int32 (** Integer constant [[-2^31, 2^31 - 1]]. *)
+  | ConstString of string (** String constant []. *)
 
 and binop =
   | OpAdd (** Binary operator [+]. *)
@@ -54,8 +55,10 @@ and instruction =
 
 and typ =
   | TypInt (** Type [int]. *)
+  | TypString (** Type [string]. *)
   | TypBool (** Type [bool]. *)
   | TypIntArray (** Type [int[]]. *)
+  | TypStringArray (** Type [string[]]. *)
   | Typ of identifier (** A class type. *)
 
 and metho = {
