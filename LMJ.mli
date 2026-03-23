@@ -52,6 +52,7 @@ and instruction =
   | ISyso of expression (** [ISyso e] represents the instruction [System.out.println(e);]. *)
   | ISetVar of identifier * expression (** [ISetVar (id, e)] represents the instruction [id = e;]. *)
   | IArraySet of identifier * expression * expression (** [IArraySet (id, e1, e2)] represents the instruction [id[e1] = e2;]. *)
+  | IReturn of expression (** [IReturn e] represents the instruction [return e]*)
 
 and typ =
   | TypInt (** Type [int]. *)
@@ -65,7 +66,6 @@ and metho = {
   result: typ; (** Result type of the method. *)
   locals: (identifier * typ) list; (** The names of the local variables with their types (declared at the beginning of the method). *)
   body: instruction list; (** The list of instructions of the method. *)
-  return: expression (** The return expression. *)
 }
 
 and clas = {

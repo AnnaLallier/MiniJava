@@ -4,6 +4,8 @@
 
 Environ 5 points au DS. Mieux vaut faire jusqu'à if sans else, chaînes de caractères, opérateurs associés, etc.
 
+Rendu dans la semaine après le DS de Compilation.
+
 ## Références
 
 https://introcs.cs.princeton.edu/java/11precedence/
@@ -59,6 +61,9 @@ Et après tout ça, on peut make, et on peut faire
     
     test/test.sh -a
 
+Tester le C avec mini-java :
+
+    ./mini-java ./test/good/Ackermann.java
 
 ## Instructions
 
@@ -76,13 +81,16 @@ Liste de choses à faire :
     do ... while (fait)
     
     float (fait)
-    string
+    string (fait)
     interface
-    surcharge
-    sysout
+    surcharge : changer le nom des fonctions pour rendre un nom unique
+    sysout : le + facile
     lambda
+    return void pour les méthodes
+    -> vérifier que le type de retour est bon : method typecheck method
+    -> vérifier que une expression a forcément un retour
 
-    return 
+    return JE SUIS EN TRAIN DE LE FAIRE ALLEZ COURAGE
     break 
     continue
 
