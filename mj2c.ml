@@ -503,6 +503,10 @@ let instr2c
                       | TypStringArray -> fprintf out "printf(\"%%p\\n\", %a);"
                       | TypIntArray -> fprintf out "printf(\"%%p\\n\", %a);" (*verifier %p pour pointeur*))
          (expr2c method_name class_info) e
+
+    | IReturn e -> 
+       fprintf out "return %a;"
+        (expr2c method_name class_info) e
   in
   instr2c out ins
 
@@ -574,11 +578,7 @@ let method_definition2c
     : unit =
   let class_info = get_class_info class_name in
   let method_definition out (method_name, m) =
-    let return2c out e =
-      fprintf out "return (void*)(%a);"
-        (expr2c method_name class_info) e
-    in
-    fprintf out "void* %s_%s(struct %s* this%a) {%a%a%a\n}"
+    fprintf out "void* %s_%s(struct %s* this%a) {%a%a\n}"
       class_name
       method_name
       class_name
@@ -586,7 +586,6 @@ let method_definition2c
       (term_list semicolon (indent indentation decl2c))
       m.locals
       (list (indent indentation (instr2c method_name class_info))) m.body
-      (indent indentation return2c) m.return
   in
   fprintf out "%a"
     (sep_list nl method_definition)
