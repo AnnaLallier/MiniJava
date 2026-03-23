@@ -478,11 +478,10 @@ let instr2c
          (expr2c method_name class_info) c
          instr2c i
 
-    | IDoWhile (i1, c, i2) ->
-       fprintf out "do %a while (%a) %a"
+    | IDoWhile (i1, c) ->
+       fprintf out "do %a while (%a);"
          instr2c i1
          (expr2c method_name class_info) c
-         instr2c i2
     
     | IFor (e1, c, e2, i) ->
        fprintf out "for (%a; %a; %a) %a"
@@ -499,6 +498,7 @@ let instr2c
     | ISyso e -> (match e.typ with
                       | TypBool -> fprintf out "if (%a) printf(\"true\\n\"); else printf(\"false\\n\");"
                       | TypInt -> fprintf out "printf(\"%%d\\n\", %a);"
+                      | TypFloat -> fprintf out "printf(\"%%g\\n\", %a);"
                       | TypString -> fprintf out "printf(\"%%s\\n\", %a);"
                       | TypStringArray -> fprintf out "printf(\"%%p\\n\", %a);"
                       | TypIntArray -> fprintf out "printf(\"%%p\\n\", %a);" (*verifier %p pour pointeur*))

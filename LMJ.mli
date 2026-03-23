@@ -48,7 +48,7 @@ and instruction =
   | IBlock of instruction list (** [IBlock [i1; i2; ...; in]] represents the instruction [{ i1 i2 ... in }]. *)
   | IIf of expression * instruction * instruction (** [IIf (e, i1, i2)] represents the instruction [if (e) i1 else i2]. *)
   | IWhile of expression * instruction (** [IWhile (e, ins)] represents the instruction [while (e) ins]. *)
-  | IDoWhile of instruction * expression * instruction (** [IDoWhile (ins1, e, ins2)] represents the instruction [do ins1 while (e) ins2]. *)
+  | IDoWhile of instruction * expression (** [IDoWhile (ins1, e)] represents the instruction [do ins1 while (e)]. *)
   | IFor of expression * expression * expression * instruction (** [IFor (e, ins)] represents the instruction [for (e) ins]. *)
   | ISyso of expression (** [ISyso e] represents the instruction [System.out.println(e);]. *)
   | ISetVar of identifier * expression (** [ISetVar (id, e)] represents the instruction [id = e;]. *)

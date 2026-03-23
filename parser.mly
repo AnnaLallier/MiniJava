@@ -200,8 +200,8 @@ instruction:
 | WHILE LPAREN c = expression RPAREN i = instruction
    { IWhile (c, i) }
 
-| DO i1 = instruction WHILE LPAREN c = expression RPAREN i2 = instruction
-   { IDoWhile (i1, c, i2) }
+| DO i1 = instruction WHILE LPAREN c = expression RPAREN SEMICOLON
+   { IDoWhile (i1, c) }
 
 | FOR LPAREN e1 = expression SEMICOLON c = expression SEMICOLON e2 = expression RPAREN i = instruction
    { IFor (e1, c, e2, i) }
