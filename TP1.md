@@ -125,7 +125,7 @@ A chaque fois qu'on ajoute quelque chose, pour tester on fait
     make
     test/test.sh -a
 
-Quand ça en marche pas, il est utile de faire 
+Quand ça ne marche pas, il est utile de faire 
 
     ./mini-java ./test/good/TestEquals.java 
     Fatal error: exception File "mj2c.ml", line 298, characters 2-7: Pattern matching failed
