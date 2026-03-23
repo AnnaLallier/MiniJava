@@ -90,13 +90,11 @@ Liste de choses à faire :
     string (fait)
     interface
     surcharge : changer le nom des fonctions pour rendre un nom unique
-    sysout : le + facile
+    sysout (fait)
     lambda
     return void pour les méthodes
 
-    return (fait)
-    -> vérifier que le type de retour est bon : method typecheck method
-    -> vérifier que une expression a forcément un retour
+    return (fait) -> vérifier que le type de retour est bon : method typecheck method & vérifier que une expression a forcément un retour
     break 
     continue
 

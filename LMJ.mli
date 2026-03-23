@@ -11,13 +11,13 @@ type expression = raw_expression Location.t
 
 (** An expression without position informations. *)
 and raw_expression =
-  | EConst of constant (** A integer or boolean constant. *)
+  | EConst of constant (** A integer or boolean or string constant. *)
   | EGetVar of identifier (** Get the value of a variable. *)
   | EUnOp of unop * expression (** An unary operator. *)
   | EBinOp of binop * expression * expression (** [EBinOp (op, e1, e2)] represents the expression [e1 op e2]. *)
   | EMethodCall of expression * identifier * expression list (** [EMethodCall (o, id, [p1, ..., pn])] represents the call [o.id(p1, ..., pn)]. *)
   | EArrayGet of expression * expression (** [EArrayGet (e1, e2)] represents the expression [e1[e2]]. *)
-  | EArrayAlloc of expression (** [EArrayAlloc e] represents the expression [new int[e]]. *)
+  | EArrayAlloc of expression (** [EArrayAlloc e] represents the expression [new int[e]] or [new string[e]]. *)
   | EArrayLength of expression (** [EArrayLength e] represents the expression [e.length]. *)
   | EThis (** [EThis] represents the expression [this]. *)
   | EObjectAlloc of identifier (** [EObjectAlloc id] represents the expression [new id()]. *)
@@ -26,6 +26,7 @@ and constant =
   | ConstBool of bool (** Boolean constant [true] or [false]. *)
   | ConstInt of int32 (** Integer constant [[-2^31, 2^31 - 1]]. *)
   | ConstFloat of float (** Float constant. *)
+  | ConstString of string (** String constant []. *)
 
 and binop =
   | OpAdd (** Binary operator [+]. *)
@@ -47,7 +48,7 @@ and instruction =
   | IBlock of instruction list (** [IBlock [i1; i2; ...; in]] represents the instruction [{ i1 i2 ... in }]. *)
   | IIf of expression * instruction * instruction (** [IIf (e, i1, i2)] represents the instruction [if (e) i1 else i2]. *)
   | IWhile of expression * instruction (** [IWhile (e, ins)] represents the instruction [while (e) ins]. *)
-  | IDoWhile of instruction * expression * instruction (** [IDoWhile (ins1, e, ins2)] represents the instruction [do ins1 while (e) ins2]. *)
+  | IDoWhile of instruction * expression (** [IDoWhile (ins1, e)] represents the instruction [do ins1 while (e)]. *)
   | IFor of expression * expression * expression * instruction (** [IFor (e, ins)] represents the instruction [for (e) ins]. *)
   | ISyso of expression (** [ISyso e] represents the instruction [System.out.println(e);]. *)
   | ISetVar of identifier * expression (** [ISetVar (id, e)] represents the instruction [id = e;]. *)
@@ -57,8 +58,10 @@ and instruction =
 and typ =
   | TypInt (** Type [int]. *)
   | TypFloat (** Type [float]. *)
+  | TypString (** Type [string]. *)
   | TypBool (** Type [bool]. *)
   | TypIntArray (** Type [int[]]. *)
+  | TypStringArray (** Type [string[]]. *)
   | Typ of identifier (** A class type. *)
 
 and metho = {

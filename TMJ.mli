@@ -21,6 +21,7 @@ and constant = LMJ.constant =
   | ConstBool of bool
   | ConstInt of int32
   | ConstFloat of float
+  | ConstString of string
 
 and binop = LMJ.binop =
   | OpAdd
@@ -42,7 +43,7 @@ and instruction =
   | IBlock of instruction list
   | IIf of expression * instruction * instruction
   | IWhile of expression * instruction
-  | IDoWhile of instruction * expression * instruction
+  | IDoWhile of instruction * expression 
   | IFor of expression * expression * expression * instruction
   | ISyso of expression
   | ISetVar of identifier * typ * expression
@@ -52,8 +53,10 @@ and instruction =
 and typ =
   | TypInt
   | TypFloat
+  | TypString
   | TypBool
   | TypIntArray
+  | TypStringArray
   | Typ of identifier
 
 and metho = {

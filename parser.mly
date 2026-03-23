@@ -4,6 +4,7 @@
 %}
 
 %token <int32> INT_CONST
+%token <string> STRING_CONST
 %token <bool> BOOL_CONST
 %token <float> FLOAT_CONST
 %token INTEGER BOOLEAN FLOAT
@@ -123,6 +124,9 @@ raw_expression:
 | f = FLOAT_CONST
    { EConst (ConstFloat f) }
 
+| s = STRING_CONST
+   { EConst (ConstString s) }
+
 | b = BOOL_CONST
    { EConst (ConstBool b) }
 
@@ -139,6 +143,9 @@ raw_expression:
    { EArrayGet (a, i) }
 
 | NEW INTEGER LBRACKET e = expression RBRACKET
+   { EArrayAlloc e }
+
+| NEW STRING LBRACKET e = expression RBRACKET
    { EArrayAlloc e }
 
 | a = expression DOT LENGTH
@@ -191,8 +198,8 @@ instruction:
 | WHILE LPAREN c = expression RPAREN i = instruction
    { IWhile (c, i) }
 
-| DO i1 = instruction WHILE LPAREN c = expression RPAREN i2 = instruction
-   { IDoWhile (i1, c, i2) }
+| DO i1 = instruction WHILE LPAREN c = expression RPAREN SEMICOLON
+   { IDoWhile (i1, c) }
 
 | FOR LPAREN e1 = expression SEMICOLON c = expression SEMICOLON e2 = expression RPAREN i = instruction
    { IFor (e1, c, e2, i) }
@@ -209,9 +216,13 @@ typ:
    { TypInt }
 | FLOAT
    { TypFloat }
+| STRING
+   { TypString }
 | BOOLEAN
    { TypBool }
 | INTEGER LBRACKET RBRACKET
    { TypIntArray }
+| STRING LBRACKET RBRACKET
+   { TypStringArray }
 | id = IDENT
    { Typ id }
