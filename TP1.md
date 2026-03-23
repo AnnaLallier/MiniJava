@@ -1,10 +1,16 @@
 # TP1 MiniJava
 
-### Le  10/02/2026
+#### Du  10/02/2026 au ...
 
 Environ 5 points au DS. Mieux vaut faire jusqu'à if sans else, chaînes de caractères, opérateurs associés, etc.
 
 Rendu dans la semaine après le DS de Compilation.
+
+
+## Auteurs
+
+- Anna LALLIER
+- Maud RAMEL
 
 ## Références
 
@@ -87,10 +93,10 @@ Liste de choses à faire :
     sysout : le + facile
     lambda
     return void pour les méthodes
+
+    return (fait)
     -> vérifier que le type de retour est bon : method typecheck method
     -> vérifier que une expression a forcément un retour
-
-    return JE SUIS EN TRAIN DE LE FAIRE ALLEZ COURAGE
     break 
     continue
 
