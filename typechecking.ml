@@ -406,7 +406,7 @@ let typecheck_method (cenv : class_env) (venv : variable_env)
     formals = List.map (fun (id, typ) -> Location.content id, type_lmj_to_tmj typ) m.formals;
     result  = type_lmj_to_tmj m.result;
     locals  = List.map (fun (id, typ) -> Location.content id, type_lmj_to_tmj typ) m.locals;
-    body    = body'
+    body    = body';
   }
 
 (** [typecheck_class cenv instanceof (name, c)] checks, using the environments [cenv] and [venv]

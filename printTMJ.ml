@@ -151,12 +151,12 @@ let rec instr out = function
       fprintf out "while (%a) %a"
         expr c
         instr i
-   | IDoWhile (i1, c, i2) ->
+  | IDoWhile (i1, c, i2) ->
          fprintf out "do %a while (%a) %a"
             instr i1
             expr c
             instr i2
-   | IFor (e1, c, e2, i) ->
+  | IFor (e1, c, e2, i) ->
          fprintf out "for (%a; %a; %a) %a"
             expr e1
             expr c
