@@ -12,7 +12,7 @@ and raw_expression =
   | EBinOp of binop * expression * expression
   | EMethodCall of expression * identifier * expression list
   | EArrayGet of expression * expression
-  | EArrayAlloc of expression
+  | EArrayAlloc of expression * typ
   | EArrayLength of expression
   | EThis
   | EObjectAlloc of identifier
@@ -56,6 +56,7 @@ and typ =
   | TypBool
   | TypIntArray
   | TypStringArray
+  | TypFloatArray
   | Typ of identifier
 
 and metho = {

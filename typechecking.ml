@@ -229,12 +229,20 @@ and typecheck_expression (cenv : class_env) (venv : variable_env) (vinit : S.t)
 
   | EArrayGet (earray, eindex) ->
       let eindex' = typecheck_expression_expecting cenv venv vinit instanceof TypInt eindex in
-      let earray' = typecheck_expression_expecting cenv venv vinit instanceof TypIntArray earray in
-      mke (TMJ.EArrayGet (earray', eindex')) TypInt
+      let earray' = typecheck_expression cenv venv vinit instanceof earray in
+      mke (TMJ.EArrayGet (earray', eindex')) 
+      (match earray'.typ with
+          | TypIntArray -> TypInt
+          | TypFloatArray -> TypFloat
+          | TypStringArray -> TypString)
 
-  | EArrayAlloc elength ->
+  | EArrayAlloc (elength, typ) -> 
       let elength' = typecheck_expression_expecting cenv venv vinit instanceof TypInt elength in
-      mke (TMJ.EArrayAlloc elength') TypIntArray
+      mke (TMJ.EArrayAlloc (elength', type_lmj_to_tmj typ)) (match typ with
+                                                | TypInt -> TypIntArray
+                                                | TypFloat -> TypFloatArray
+                                                | TypString -> TypStringArray
+                                                )
 
   | EArrayLength earray ->
       let earray' = typecheck_expression_expecting cenv venv vinit instanceof TypIntArray earray in
@@ -264,11 +272,11 @@ let rec typecheck_instruction (cenv : class_env) (venv : variable_env) (vinit : 
       (TMJ.ISetVar (Location.content v, type_lmj_to_tmj typ, e'), vinit)
 
   | IArraySet (earray, eindex, evalue) ->
-      typecheck_expression_expecting cenv venv vinit instanceof TypIntArray
+      typecheck_expression cenv venv vinit instanceof 
         (Location.make (Location.startpos earray) (Location.endpos earray) (EGetVar earray))
       |> ignore;
-      let eindex' = typecheck_expression_expecting cenv venv vinit instanceof TypInt eindex in
-      let evalue' = typecheck_expression_expecting cenv venv vinit instanceof TypInt evalue in
+      let eindex' = typecheck_expression cenv venv vinit instanceof eindex in
+      let evalue' = typecheck_expression cenv venv vinit instanceof evalue in
       (TMJ.IArraySet (Location.content earray, eindex', evalue'), vinit)
 
   | IBlock instructions ->

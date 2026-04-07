@@ -17,7 +17,7 @@ and raw_expression =
   | EBinOp of binop * expression * expression (** [EBinOp (op, e1, e2)] represents the expression [e1 op e2]. *)
   | EMethodCall of expression * identifier * expression list (** [EMethodCall (o, id, [p1, ..., pn])] represents the call [o.id(p1, ..., pn)]. *)
   | EArrayGet of expression * expression (** [EArrayGet (e1, e2)] represents the expression [e1[e2]]. *)
-  | EArrayAlloc of expression (** [EArrayAlloc e] represents the expression [new int[e]] or [new string[e]]. *)
+  | EArrayAlloc of expression * typ (** [EArrayAlloc e] represents the expression [new int[e]] or [new string[e]]. *)
   | EArrayLength of expression (** [EArrayLength e] represents the expression [e.length]. *)
   | EThis (** [EThis] represents the expression [this]. *)
   | EObjectAlloc of identifier (** [EObjectAlloc id] represents the expression [new id()]. *)
@@ -61,6 +61,7 @@ and typ =
   | TypBool (** Type [bool]. *)
   | TypIntArray (** Type [int[]]. *)
   | TypStringArray (** Type [string[]]. *)
+  | TypFloatArray (** Type [float[]]. *)
   | Typ of identifier (** A class type. *)
 
 and metho = {

@@ -147,7 +147,7 @@ and print_raw_expression prefix out e pos =
        prefix'
        branch_end
        (print_expression prefix') e2
-  | EArrayAlloc e ->
+  | EArrayAlloc (e, typ) ->
      fprintf out "EArrayAlloc";
      print_position out pos;
      fprintf out "\n%s%s%a"
