@@ -9,6 +9,10 @@ open TMJ
     };
     But [array] could be the name of a class and in this case, we have to create a new name. *)
 let struct_array_name = ref ""
+let struct_float_array_name = ref ""
+let struct_char_array_name = ref ""
+
+
 
 (** [name1] is a fresh name, different from all other variables in the MiniJava program. *)
 let name1 = ref ""
@@ -322,7 +326,8 @@ let type2c
   | TypString -> fprintf out "String"
   | TypBool -> fprintf out "int"
   | TypIntArray -> fprintf out "struct %s*" !struct_array_name
-  | TypStringArray -> fprintf out "struct %s*" !struct_array_name
+  | TypStringArray -> fprintf out "struct %s*" !struct_char_array_name
+  | TypFloatArray -> fprintf out "struct %s*" !struct_float_array_name
   | Typ t -> fprintf out "struct %s*" t
 
 (** [cast out typ] transpiles the cast to [typ] to C on the output channel [out]. *)
@@ -388,17 +393,23 @@ let expr2c
          !name1
          (prec_list comma expr2c) args
 
-    | EArrayAlloc e ->
+    | EArrayAlloc (e, typ)->
        fprintf out "(void*)({ int %s = %a; \
                     if (%s < 0) exit(1); \
                     struct %s* res = tgc_alloc(({ extern tgc_t gc; &gc; }), sizeof(struct %s)); \
-                    res->array = (int*) tgc_calloc(({ extern tgc_t gc; &gc; }), %s, sizeof(int)); \
+                    res->array = tgc_calloc(({ extern tgc_t gc; &gc; }), %s, sizeof(int)); \
                     res->length = %s; res; })"
          !name1
          expr2c e
          !name1
-         !struct_array_name
-         !struct_array_name
+         (match typ with
+            | TypInt -> !struct_array_name
+            | TypFloat -> !struct_float_array_name
+            | TypString -> !struct_char_array_name)    
+          (match typ with
+            | TypInt -> !struct_array_name
+            | TypFloat -> !struct_float_array_name
+            | TypString -> !struct_char_array_name)      
          !name1
          !name1
 
@@ -412,14 +423,21 @@ let expr2c
     | EArrayGet (ea, ei) ->
        fprintf out "({ int %s = %a; \
                     struct %s* %s = %a; \
-                    int res; \
+                    %s res; \
                     if (%s < 0 || %s >= %s->length) exit(1); \
                     else res = %s->array[%s]; res; })"
          !name1
          expr2c ei
-         !struct_array_name
+         (match ea.typ with
+         | TypIntArray -> !struct_array_name 
+         | TypFloatArray -> !struct_float_array_name
+         | TypStringArray -> !struct_char_array_name)
          !name2
          expr2c ea
+         (match ea.typ with
+         | TypIntArray -> "int"
+         | TypFloatArray -> "float"
+         | TypStringArray -> "char*")
          !name1
          !name1
          !name2
@@ -502,7 +520,7 @@ let instr2c
                       | TypFloat -> fprintf out "printf(\"%%g\\n\", %a);"
                       | TypString -> fprintf out "printf(\"%%s\\n\", %a);"
                       | TypStringArray -> fprintf out "printf(\"%%p\\n\", %a);"
-                      | TypIntArray -> fprintf out "printf(\"%%p\\n\", %a);" (*verifier %p pour pointeur*))
+                      | TypIntArray -> fprintf out "printf(\"%%p\\n\", %a);" )
          (expr2c method_name class_info) e
 
     | IReturn e -> 
@@ -632,6 +650,8 @@ let program2c out (p : TMJ.program) : unit =
       s
   in
   struct_array_name := variant "array" all_class_names;
+  struct_float_array_name := variant "arrayfloat" all_class_names;
+  struct_char_array_name := variant "arraychar" all_class_names;
   let all_variables = all_variables p in
   name1 := variant "tmp1" all_variables;
   name2 := variant "tmp2" (!name1 :: all_variables);
@@ -642,6 +662,8 @@ let program2c out (p : TMJ.program) : unit =
      #pragma GCC diagnostic ignored \"-Wpointer-to-int-cast\"\n\
      #pragma GCC diagnostic ignored \"-Wint-to-pointer-cast\"\n\
      struct %s { int* array; int length; };\n\
+     struct %s { float* array; int length; };\n\
+     struct %s { char** array; int length; };\n\
      tgc_t gc;\n\
      %a\
      %a\
@@ -655,6 +677,8 @@ let program2c out (p : TMJ.program) : unit =
      %a\n\
      }\n"
     !struct_array_name
+    !struct_float_array_name
+    !struct_char_array_name
 
     (term_list nl class_declaration2c)
     all_class_names
