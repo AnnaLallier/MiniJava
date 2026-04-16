@@ -1,4 +1,63 @@
-## MiniJava Transpiler
+# MiniJava Transpiler - 4INFO 2026
+
+Du 10/02/2026 au 17/04/2026
+
+
+## Auteurs
+
+- Anna LALLIER
+- Maud RAMEL
+- Pascal GARCIA (créateur du projet)
+
+
+## Lancement
+
+Compiler avec :
+
+    make clean
+    make 
+
+(`make clean` n'est pas obligatoire, mais il est conseillé de l'utiliser pour être sûr que les modifications soient prises en compte)
+
+Pour tester : 
+    
+    test/test.sh -a
+
+Tester le C avec mini-java (exemples) :
+
+    ./mini-java ./test/good/Ackermann.java
+    ./mini-java ./test/good/TestEquals.java 
+
+
+## Instructions
+
+Listes de possibilités à ajouter :
+
+    > (fait)
+    || (fait)
+    ^ (fait)
+    / (fait)
+    & (fait)
+    | (bitwise inclusive OR) (fait)
+    ==  (utiliser compatible) (fait)
+    if sans else (fait)
+    for (fait)
+    do ... while (fait)
+    
+    float (fait)
+    string (fait)
+    interface
+    surcharge : changer le nom des fonctions pour rendre un nom unique
+    sysout (fait)
+    lambda
+    return void pour les méthodes (fait)
+
+    return (fait)
+    break 
+    continue
+
+
+## Description
 
 `mini-java` is an educational transpiler from [MiniJava](http://www.cambridge.org/resources/052182060X/), which is a subset of [Java](https://en.wikipedia.org/wiki/Java_%28programming_language%29),
 to [C](https://en.wikipedia.org/wiki/C_%28programming_language%29).\
@@ -83,3 +142,13 @@ make
 ```
 
 The branch `ast_typed` has an abstract syntax tree decorated with type information. This tree is produced by the typechecker and it can be useful if you want to augment `MiniJava`.
+
+
+
+## Références utiles
+
+https://introcs.cs.princeton.edu/java/11precedence/
+
+https://docs.oracle.com/javase/specs/jls/se25/html/index.html
+
+https://blog.paumard.org/cours/java/chap05-noms-operateurs-operateurs.html

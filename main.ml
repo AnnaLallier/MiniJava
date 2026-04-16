@@ -89,21 +89,20 @@ let () =
     (** [!stop_at_parsing] is used by our testing script [test.sh] to only test
         the lexical and syntactical phases. *)
     if !stop_at_parsing then exit 0;
-    Typechecking.typecheck_program program;
+    let tmj = Typechecking.typecheck_program program in
     (** [!stop_at_typechecking] is used by our testing script [test.sh] to only test
         the typechecker. *)
     if !stop_at_typechecking then exit 0;
     (** [translate_program] is used to get rid of the position informations.
         We don't need them after the typechecking phase. *)
-    let mj = Lmj2mj.translate_program program in
     let output = open_out !ofile in
-    Printf.fprintf output "/*\n";
-    PrintMJ.print_program output mj;
-    Printf.fprintf output "*/\n";
-    Mj2c.program2c output mj;
+    (**Printf.fprintf output "/*\n";
+    PrintTMJ.print_program output tmj;
+    Printf.fprintf output "*/\n"; **)
+    Mj2c.program2c output tmj;
     close_out output;
     match
-      Unix.system(Printf.sprintf "%s %s -o %s -I%s %s/tgc.o"
+      Unix.system(Printf.sprintf "%s %s -o %s -std=c99 -I%s %s/tgc.o"
                     !cc !ofile (Filename.chop_extension !ifile) !tgc_path !tgc_path)
     with
     | Unix.WEXITED code -> exit code

@@ -1,8 +1,8 @@
-class While {
+class DoWhile {
     public static void main(String[] args) {
         // Boolean expected
-        while (1) {
+        do {
             System.out.println(1);
-        }
+        } while (1) ;
     }
 }

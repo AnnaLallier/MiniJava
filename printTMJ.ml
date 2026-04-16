@@ -1,6 +1,6 @@
 open Printf
 open Print
-open MJ
+open TMJ
 
 let indentation = 2
 
@@ -12,6 +12,8 @@ let constant out = function
      fprintf out "false"
   | ConstInt i ->
      fprintf out "%ld" i
+  | ConstFloat f ->
+     fprintf out "%f" f
 
 (** [binop out op] prints the binary operator [op] on the output channel [out]. *)
 let binop out = function
@@ -21,10 +23,24 @@ let binop out = function
      fprintf out "-"
   | OpMul ->
      fprintf out "*"
+  | OpDiv ->
+     fprintf out "/"
   | OpLt  ->
      fprintf out "<"
   | OpAnd ->
      fprintf out "&&"
+  | OpGt -> 
+     fprintf out ">"
+  | OpOr ->
+     fprintf out "||"
+  | OpOrBit ->
+     fprintf out "|"
+  | OpOrBitEx ->
+     fprintf out "^"
+  | OpBitwiseAnd ->
+     fprintf out "&"
+  | OpEquals ->
+     fprintf out "=="
 
 (** [expr out e], [expr0 out e], ..., [expr6 out e] print the expression [e]
     on the output channel [out]. [expr] is a synonym for [expr6].
@@ -35,7 +51,7 @@ let binop out = function
     of greatest priority. It's in the default case of [expr0] that we put parenthesis, in
     this case, we have an expression of lower priority than the current context and so we
     have to put parenthesis around it and then call [expr] again. *)
-let rec expr0 out = function
+let rec expr0 out e = match e.raw_expression with
   | EConst c ->
      fprintf out "%a" constant c
   | EGetVar x ->
@@ -57,66 +73,66 @@ let rec expr0 out = function
   | EObjectAlloc id ->
      fprintf out "new %s()"
        id
-  | e ->
+  | _ ->
      fprintf out "(%a)"
        expr e
 
-and expr1 out = function
+and expr1 out e = match e.raw_expression with
   | EArrayAlloc e ->
      fprintf out "new int[%a]"
        expr e
-  | e ->
+  | _ ->
      expr0 out e
 
-and expr2 out = function
+and expr2 out e = match e.raw_expression with
   | EUnOp (UOpNot, e) ->
      fprintf out "!%a"
        expr2 e
-  | e ->
+  | _ ->
      expr1 out e
 
-and expr3 out = function
+and expr3 out e = match e.raw_expression with 
   | EBinOp (OpMul as op, e1, e2) ->
      fprintf out "%a %a %a"
        expr3 e1
        binop op
        expr3 e2
-  | e ->
+  | _ ->
      expr2 out e
 
-and expr4 out = function
+and expr4 out e = match e.raw_expression with
   | EBinOp (OpSub as op, e1, e2) ->
      fprintf out "%a %a %a"
        expr4 e1
        binop op
        expr3 e2
-  | e ->
+  | _ ->
      expr3 out e
 
-and expr5 out = function
+and expr5 out e = match e.raw_expression with
   | EBinOp (OpAdd as op, e1, e2) ->
      fprintf out "%a %a %a"
        expr5 e1
        binop op
        expr5 e2
-  | e ->
+  | _ ->
      expr4 out e
 
-and expr6 out = function
-  | EBinOp ((OpLt | OpAnd) as op, e1, e2) ->
+and expr6 out e = match e.raw_expression with
+  | EBinOp ((OpLt | OpAnd | OpGt) as op, e1, e2) ->
      fprintf out "%a %a %a"
        expr6 e1
        binop op
        expr6 e2
-  | e ->
+  | _ ->
      expr5 out e
 
-and expr out e =
-  expr6 out e
+and expr out e = 
+   expr6 out e
 
 (** [binop out ins] prints the instruction [ins] on the output channel [out]. *)
 let rec instr out = function
-  | ISetVar (x, e) ->
+  | ISetVar (x, _, e) ->
      fprintf out "%s = %a;"
        x
        expr e
@@ -135,6 +151,17 @@ let rec instr out = function
       fprintf out "while (%a) %a"
         expr c
         instr i
+  | IDoWhile (i1, c, i2) ->
+         fprintf out "do %a while (%a) %a"
+            instr i1
+            expr c
+            instr i2
+  | IFor (e1, c, e2, i) ->
+         fprintf out "for (%a; %a; %a) %a"
+            expr e1
+            expr c
+            expr e2
+            instr i
   | IBlock is ->
      fprintf out "{%a%t}"
        (indent indentation (sep_list nl instr)) is
@@ -142,11 +169,16 @@ let rec instr out = function
   | ISyso e ->
      fprintf out "System.out.println(%a);"
        expr e
+   | IReturn e ->
+       fprintf out "return %a;"
+          expr e
 
 (** [typ out t] prints the type [t] on the output channel [out]. *)
 let typ out = function
   | TypInt ->
      fprintf out "int"
+  | TypFloat ->
+     fprintf out "float"
   | TypBool ->
      fprintf out "boolean"
   | TypIntArray ->
@@ -163,13 +195,12 @@ let binding out (x, t) =
 
 (** [metho out (name, m)] prints the method [name] with type [MJ.metho m] on the output channel [out]. *)
 let metho out (name, m) =
-  fprintf out "public %a %s(%a) {%a%a%t%t}"
+   fprintf out "public %a %s(%a) {%a%a%t}"
     typ m.result
     name
     (sep_list comma binding) m.formals
     (term_list semicolon (indent indentation binding)) m.locals
     (list (indent indentation instr)) m.body
-    (indent_t indentation (fun out -> fprintf out "return %a;" expr m.return))
     nl
 
 (** [clas out (name, c)] prints the clas [name] with type [MJ.clas c] on the output channel [out]. *)
@@ -183,7 +214,7 @@ let clas out (name, c) =
     (list (indent indentation metho)) c.methods
     nl
 
-let print_program out (p : MJ.program) : unit =
+let print_program out (p : TMJ.program) : unit =
   fprintf out "class %s {%t%t}%t%a"
     p.name
     (indent_t indentation

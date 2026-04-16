@@ -63,6 +63,8 @@ let print_constant out = function
      fprintf out "ConstBool %s" (string_of_bool b)
   | ConstInt i ->
      fprintf out "ConstInt %ld" i
+  | ConstFloat f ->
+     fprintf out "ConstFloat %f" f
 
 (** [print_unop out op] prints the unary operator [op] on the output channel [out]. *)
 let print_unop out = function
@@ -77,10 +79,24 @@ let print_binop out = function
      fprintf out "OpSub"
   | OpMul ->
      fprintf out "OpMul"
+  | OpDiv ->
+     fprintf out "OpDiv"
   | OpLt  ->
      fprintf out "OpLt"
+  | OpGt -> 
+     fprintf out "OpGt"
   | OpAnd ->
      fprintf out "OpAnd"
+  | OpOr ->
+    fprintf out "OpOr"
+  | OpOrBit ->
+    fprintf out "OpOrBit"
+  | OpOrBitEx ->
+    fprintf out "OpOrBitEx"
+  | OpBitwiseAnd ->
+    fprintf out "OpBitwiseAnd"
+  | OpEquals ->
+    fprintf out "OpEquals"
 
 (** [print_expression prefix out e] prints the expression [e] on the output channel [out].
     [prefix] is the string already printed just before [e]. *)
@@ -141,7 +157,7 @@ and print_raw_expression prefix out e pos =
        prefix'
        branch_end
        (print_expression prefix') e2
-  | EArrayAlloc e ->
+  | EArrayAlloc (e, typ) ->
      fprintf out "EArrayAlloc";
      print_position out pos;
      fprintf out "\n%s%s%a"
@@ -217,6 +233,36 @@ let rec print_instruction prefix out i =
        prefix'
        branch_end
        (print_expression prefix') e2
+  | IDoWhile (i1, e, i2) ->
+     fprintf out "IDoWhile\n%s%s%a\n%s%s%a\n%s%s%a"
+       prefix'
+       branch
+       (print_instruction (prefix' ^ pipe)) i1
+       prefix'
+       branch
+       (print_expression (prefix' ^ pipe)) e
+       prefix'
+       branch_end
+       (print_instruction prefix') i2
+  | IFor (e1, e2, e3, i) ->
+     fprintf out "IFor\n%s%s%a\n%s%s%a\n%s%s%a\n%s%s%a"
+       prefix'
+       branch
+       (print_expression (prefix' ^ pipe)) e1
+       prefix'
+       branch
+       (print_expression (prefix' ^ pipe)) e2
+       prefix'
+       branch
+       (print_expression (prefix' ^ pipe)) e3
+       prefix'
+       branch_end
+       (print_instruction prefix') i
+  | IReturn e ->
+     fprintf out "IReturn\n%s%s%a"
+       prefix'
+       branch_end
+       (print_expression prefix') e
 
 (** [print_instruction_list prefix out l] prints the list of instructions [l] on the output channel [out].
     [prefix] is the current prefix string, but currently the position in the output channel [out] is
@@ -229,6 +275,8 @@ let print_type out typ =
   match typ with
   | TypInt ->
      fprintf out "int"
+  | TypFloat ->
+    fprintf out "float"
   | TypBool ->
      fprintf out "bool"
   | TypIntArray ->
@@ -250,7 +298,7 @@ let print_declaration_list out l =
 (** [print_method prefix out m] prints the method [m] on the output channel [out].
     [prefix] is the string already printed just before [m]. *)
 let print_method prefix out m =
-  fprintf out "formals %a\n%s%sresult %a\n%s%slocals %a\n%s%sbody\n%a%s%s%sreturn\n%a"
+  fprintf out "formals %a\n%s%sresult %a\n%s%slocals %a\n%s%sbody\n%a"
     print_declaration_list m.formals
     prefix
     branch
@@ -261,10 +309,6 @@ let print_method prefix out m =
     prefix
     branch
     (print_instruction_list (prefix ^ pipe)) m.body
-    (if m.body = [] then "" else "\n")
-    prefix
-    branch_end
-    (print_expression_list (prefix ^ " ")) [m.return]
 
 (** [print_identifier_method_list prefix out l] prints the list of methods with their names [l] on the output channel [out].
     [prefix] is the current prefix string, but currently the position in the output channel [out] is

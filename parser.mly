@@ -4,25 +4,37 @@
 %}
 
 %token <int32> INT_CONST
+%token <string> STRING_CONST
 %token <bool> BOOL_CONST
-%token INTEGER BOOLEAN
+%token <float> FLOAT_CONST
+%token INTEGER BOOLEAN FLOAT
 %token <string Location.t> IDENT
 %token CLASS PUBLIC STATIC VOID MAIN STRING EXTENDS RETURN
-%token PLUS MINUS TIMES NOT LT AND
+%token PLUS MINUS TIMES NOT LT AND GT OR DIV BITWISEAND EQUALS BITOR BITOREX
 %token COMMA SEMICOLON
 %token ASSIGN
 %token LPAREN RPAREN LBRACKET RBRACKET LBRACE RBRACE
 %token THIS NEW DOT LENGTH
 %token SYSO
-%token IF ELSE WHILE
+%token IF ELSE WHILE FOR DO
 %token EOF
 
-%left AND
-%nonassoc LT
-%left PLUS MINUS
-%left TIMES
+
+(* Ordre de priorité : Le moins prioritaire*)
+%nonassoc NOELSE
+%nonassoc ELSE
+%left EQUALS
+%left BITWISEAND
+%left BITOREX
+%left BITOR
+%left AND 
+%left OR
+%nonassoc LT GT
+%left PLUS MINUS 
+%left TIMES DIV
 %nonassoc NOT
-%nonassoc DOT LBRACKET
+%nonassoc DOT LBRACKET 
+(* Le plus prioritaire*)
 
 %start program
 
@@ -78,7 +90,6 @@ metho:
    RPAREN
    LBRACE
    ds = declarations_and_statements
-   RETURN e = expression SEMICOLON
    RBRACE
    {
      let d, s = fst ds, snd ds in
@@ -87,8 +98,7 @@ metho:
        formals = swap f;
        result  = t;
        locals  = d;
-       body    = s;
-       return  = e;
+          body    = s;
      }
    }
 
@@ -111,6 +121,12 @@ raw_expression:
 | i = INT_CONST
    { EConst (ConstInt i) }
 
+| f = FLOAT_CONST
+   { EConst (ConstFloat f) }
+
+| s = STRING_CONST
+   { EConst (ConstString s) }
+
 | b = BOOL_CONST
    { EConst (ConstBool b) }
 
@@ -127,7 +143,13 @@ raw_expression:
    { EArrayGet (a, i) }
 
 | NEW INTEGER LBRACKET e = expression RBRACKET
-   { EArrayAlloc e }
+   { EArrayAlloc (e, TypInt) }
+
+| NEW STRING LBRACKET e = expression RBRACKET
+   { EArrayAlloc (e, TypString) }
+
+| NEW FLOAT LBRACKET e = expression RBRACKET
+   { EArrayAlloc (e, TypFloat) }
 
 | a = expression DOT LENGTH
    { EArrayLength a }
@@ -145,8 +167,17 @@ raw_expression:
 | PLUS  { OpAdd }
 | MINUS { OpSub }
 | TIMES { OpMul }
+| DIV   { OpDiv }
 | LT    { OpLt }
+| GT    { OpGt }
 | AND   { OpAnd }
+| OR    { OpOr }
+| BITWISEAND { OpBitwiseAnd }
+| EQUALS { OpEquals }
+| BITOR { OpOrBit }
+| BITOREX { OpOrBitEx}
+
+
 
 instruction:
 | b = block
@@ -164,8 +195,20 @@ instruction:
 | IF LPAREN c = expression RPAREN i1 = instruction ELSE i2 = instruction
    { IIf (c, i1, i2) }
 
+| IF LPAREN c = expression RPAREN i1 = instruction %prec NOELSE
+    { IIf (c, i1, IBlock[]) }
+
 | WHILE LPAREN c = expression RPAREN i = instruction
    { IWhile (c, i) }
+
+| DO i1 = instruction WHILE LPAREN c = expression RPAREN i2 = instruction
+   { IDoWhile (i1, c, i2) }
+
+| FOR LPAREN e1 = expression SEMICOLON c = expression SEMICOLON e2 = expression RPAREN i = instruction
+   { IFor (e1, c, e2, i) }
+
+| RETURN e = expression SEMICOLON
+   { IReturn e}
 
 block:
 | LBRACE is = list(instruction) RBRACE
@@ -174,9 +217,16 @@ block:
 typ:
 | INTEGER
    { TypInt }
+| FLOAT
+   { TypFloat }
+| STRING
+   { TypString }
 | BOOLEAN
    { TypBool }
 | INTEGER LBRACKET RBRACKET
    { TypIntArray }
+| STRING LBRACKET RBRACKET
+   { TypStringArray }
+
 | id = IDENT
    { Typ id }

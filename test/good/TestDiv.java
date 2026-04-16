@@ -1,8 +1,10 @@
-class While {
+class TestDiv {
     public static void main(String[] args) {
-        // Boolean expected
-        while (1) {
+        if(6/2>2){
             System.out.println(1);
+        } else {
+            System.out.println(0);
         }
+
     }
 }

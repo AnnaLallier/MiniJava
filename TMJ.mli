@@ -3,14 +3,16 @@
 
 type identifier = string
 
-type expression =
+type expression = { raw_expression : raw_expression; typ : typ }
+
+and raw_expression =
   | EConst of constant
   | EGetVar of identifier
   | EUnOp of unop * expression
   | EBinOp of binop * expression * expression
   | EMethodCall of expression * identifier * expression list
   | EArrayGet of expression * expression
-  | EArrayAlloc of expression
+  | EArrayAlloc of expression * typ
   | EArrayLength of expression
   | EThis
   | EObjectAlloc of identifier
@@ -18,13 +20,22 @@ type expression =
 and constant = LMJ.constant =
   | ConstBool of bool
   | ConstInt of int32
+  | ConstFloat of float
+  | ConstString of string
 
 and binop = LMJ.binop =
   | OpAdd
   | OpSub
   | OpMul
+  | OpDiv
   | OpLt
+  | OpGt
   | OpAnd
+  | OpOr
+  | OpOrBit 
+  | OpOrBitEx
+  | OpBitwiseAnd
+  | OpEquals
 
 and unop = LMJ.unop = UOpNot
 
@@ -32,22 +43,28 @@ and instruction =
   | IBlock of instruction list
   | IIf of expression * instruction * instruction
   | IWhile of expression * instruction
+  | IDoWhile of instruction * expression * instruction
+  | IFor of expression * expression * expression * instruction
   | ISyso of expression
-  | ISetVar of identifier * expression
+  | ISetVar of identifier * typ * expression
   | IArraySet of identifier * expression * expression
+  | IReturn of expression
 
 and typ =
   | TypInt
+  | TypFloat
+  | TypString
   | TypBool
   | TypIntArray
+  | TypStringArray
+  | TypFloatArray
   | Typ of identifier
 
 and metho = {
     formals: (identifier * typ) list;
     result: typ;
     locals: (identifier * typ) list;
-    body: instruction list;
-    return: expression
+  body: instruction list;
   }
 
 and clas = {

@@ -16,9 +16,11 @@
 
 let digit = ['0'-'9']
 let integer = digit+
+let float = digit+ '.' digit+ 
 let space = [' ' '\t' '\r']
 let letter = ['a'-'z''A'-'Z''_']
 let ident = letter (digit | letter)*
+let string = ['"'] (digit | letter)* ['"']
 
 rule get_token = parse
   | "//" [^ '\n']* '\n'
@@ -28,8 +30,14 @@ rule get_token = parse
   | '+'       { PLUS }
   | '-'       { MINUS }
   | '*'       { TIMES }
+  | '/'       { DIV }
   | "&&"      { AND }
+  | '&'       { BITWISEAND }
+  | "||"      { OR }
+  | "|"       { BITOR }
+  | "^"       { BITOREX }
   | "<"       { LT }
+  | ">"       { GT }
   | '('       { LPAREN }
   | ')'       { RPAREN }
   | '['       { LBRACKET }
@@ -39,10 +47,13 @@ rule get_token = parse
   | '.'       { DOT }
   | ';'       { SEMICOLON }
   | '='       { ASSIGN }
+  | "=="      { EQUALS }
   | ","       { COMMA }
   | "true"    { BOOL_CONST true }
   | "false"   { BOOL_CONST false }
+  | string as s  { STRING_CONST s }
   | "int"     { INTEGER }
+  | "float"   { FLOAT }
   | "boolean" { BOOLEAN }
   | "!"       { NOT }
   | ","       { COMMA }
@@ -61,6 +72,8 @@ rule get_token = parse
   | "if"    { IF }
   | "else"  { ELSE }
   | "while" { WHILE }
+  | "do" { DO }
+  | "for" { FOR }
   | integer as i
       {
         try
@@ -69,6 +82,14 @@ rule get_token = parse
           INT_CONST (Int32.of_string i)
         with Failure _ ->
           raise (Error "Invalid integer constant")
+      }
+
+  | float as f 'f' 
+      {
+        try
+          FLOAT_CONST (float_of_string f)
+        with Failure _ ->
+          raise (Error "Invalid float constant")
       }
   | ident as id { IDENT (Location.make (lexeme_start_p lexbuf) (lexeme_end_p lexbuf) id) }
   | "//" [^ '\n']* eof

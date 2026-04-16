@@ -11,13 +11,13 @@ type expression = raw_expression Location.t
 
 (** An expression without position informations. *)
 and raw_expression =
-  | EConst of constant (** A integer or boolean constant. *)
+  | EConst of constant (** A integer or boolean or string constant. *)
   | EGetVar of identifier (** Get the value of a variable. *)
   | EUnOp of unop * expression (** An unary operator. *)
   | EBinOp of binop * expression * expression (** [EBinOp (op, e1, e2)] represents the expression [e1 op e2]. *)
   | EMethodCall of expression * identifier * expression list (** [EMethodCall (o, id, [p1, ..., pn])] represents the call [o.id(p1, ..., pn)]. *)
   | EArrayGet of expression * expression (** [EArrayGet (e1, e2)] represents the expression [e1[e2]]. *)
-  | EArrayAlloc of expression (** [EArrayAlloc e] represents the expression [new int[e]]. *)
+  | EArrayAlloc of expression * typ (** [EArrayAlloc e] represents the expression [new int[e]] or [new string[e]]. *)
   | EArrayLength of expression (** [EArrayLength e] represents the expression [e.length]. *)
   | EThis (** [EThis] represents the expression [this]. *)
   | EObjectAlloc of identifier (** [EObjectAlloc id] represents the expression [new id()]. *)
@@ -25,28 +25,44 @@ and raw_expression =
 and constant =
   | ConstBool of bool (** Boolean constant [true] or [false]. *)
   | ConstInt of int32 (** Integer constant [[-2^31, 2^31 - 1]]. *)
+  | ConstFloat of float (** Float constant. *)
+  | ConstString of string (** String constant []. *)
 
 and binop =
   | OpAdd (** Binary operator [+]. *)
   | OpSub (** Binary operator [-]. *)
   | OpMul (** Binary operator [*]. *)
+  | OpDiv (** Binary operator [/]. *)
   | OpLt  (** Binary operator [<]. *)
+  | OpGt  (** Binary operator [>]. *)
   | OpAnd (** Binary operator [&&]. *)
+  | OpOr  (** Binary operator [||]. *)
+  | OpOrBit  (** Binary operator [|]. *)
+  | OpOrBitEx  (** Binary operator [^]. *)
+  | OpBitwiseAnd (** Binary operator [&]. *)
+  | OpEquals (** Binary operator [==]. *)
 
 and unop = UOpNot (** Unary operator [!]. *)
 
 and instruction =
   | IBlock of instruction list (** [IBlock [i1; i2; ...; in]] represents the instruction [{ i1 i2 ... in }]. *)
   | IIf of expression * instruction * instruction (** [IIf (e, i1, i2)] represents the instruction [if (e) i1 else i2]. *)
-  | IWhile of expression * instruction (** [IWile (e, ins)] represents the instruction [while (e) ins]. *)
+  | IWhile of expression * instruction (** [IWhile (e, ins)] represents the instruction [while (e) ins]. *)
+  | IDoWhile of instruction * expression * instruction (** [IDoWhile (ins1, e, ins2)] represents the instruction [do ins1 while (e) ins2]. *)
+  | IFor of expression * expression * expression * instruction (** [IFor (e, ins)] represents the instruction [for (e) ins]. *)
   | ISyso of expression (** [ISyso e] represents the instruction [System.out.println(e);]. *)
   | ISetVar of identifier * expression (** [ISetVar (id, e)] represents the instruction [id = e;]. *)
   | IArraySet of identifier * expression * expression (** [IArraySet (id, e1, e2)] represents the instruction [id[e1] = e2;]. *)
+  | IReturn of expression (** [IReturn e] represents the instruction [return e]*)
 
 and typ =
   | TypInt (** Type [int]. *)
+  | TypFloat (** Type [float]. *)
+  | TypString (** Type [string]. *)
   | TypBool (** Type [bool]. *)
   | TypIntArray (** Type [int[]]. *)
+  | TypStringArray (** Type [string[]]. *)
+  | TypFloatArray (** Type [float[]]. *)
   | Typ of identifier (** A class type. *)
 
 and metho = {
@@ -54,7 +70,6 @@ and metho = {
   result: typ; (** Result type of the method. *)
   locals: (identifier * typ) list; (** The names of the local variables with their types (declared at the beginning of the method). *)
   body: instruction list; (** The list of instructions of the method. *)
-  return: expression (** The return expression. *)
 }
 
 and clas = {
