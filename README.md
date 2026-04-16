@@ -12,12 +12,12 @@ Du 10/02/2026 au 17/04/2026
 
 ## Lancement
 
-
-    make 
-
-ou 
+Compiler avec :
 
     make clean
+    make 
+
+(`make clean` n'est pas obligatoire, mais il est conseillé de l'utiliser pour être sûr que les modifications soient prises en compte)
 
 Pour tester : 
     
