@@ -2,13 +2,13 @@
 
 Du 10/02/2026 au 17/04/2026
 
+https://github.com/AnnaLallier/MiniJava/
 
 ## Auteurs
 
 - Anna LALLIER
 - Maud RAMEL
 - Pascal GARCIA (créateur du projet)
-
 
 ## Lancement
 
