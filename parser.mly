@@ -143,10 +143,13 @@ raw_expression:
    { EArrayGet (a, i) }
 
 | NEW INTEGER LBRACKET e = expression RBRACKET
-   { EArrayAlloc e }
+   { EArrayAlloc (e, TypInt) }
 
 | NEW STRING LBRACKET e = expression RBRACKET
-   { EArrayAlloc e }
+   { EArrayAlloc (e, TypString) }
+
+| NEW FLOAT LBRACKET e = expression RBRACKET
+   { EArrayAlloc (e, TypFloat) }
 
 | a = expression DOT LENGTH
    { EArrayLength a }
@@ -224,5 +227,6 @@ typ:
    { TypIntArray }
 | STRING LBRACKET RBRACKET
    { TypStringArray }
+
 | id = IDENT
    { Typ id }
