@@ -332,8 +332,8 @@ let rec typecheck_instruction (cenv : class_env) (venv : variable_env) (vinit : 
       (TMJ.IFor (id1', cond', id2', ibody'), vinit, false)
 
   | ISyso e ->
-     let e' = typecheck_expression_expecting cenv venv vinit instanceof TypInt e in
-      (TMJ.ISyso e', vinit, false)
+     let e' = typecheck_expression cenv venv vinit instanceof e in
+        (TMJ.ISyso e', vinit, false)
   
   | IReturn e ->
       begin
