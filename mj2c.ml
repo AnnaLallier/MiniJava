@@ -496,10 +496,11 @@ let instr2c
          (expr2c method_name class_info) c
          instr2c i
 
-    | IDoWhile (i1, c) ->
-       fprintf out "do %a while (%a);"
+    | IDoWhile (i1, c, i2) ->
+       fprintf out "do %a while (%a) %a"
          instr2c i1
          (expr2c method_name class_info) c
+         instr2c i2
     
     | IFor (e1, c, e2, i) ->
        fprintf out "for (%a; %a; %a) %a"
@@ -521,6 +522,10 @@ let instr2c
                       | TypStringArray -> fprintf out "printf(\"%%p\\n\", %a);"
                       | TypIntArray -> fprintf out "printf(\"%%p\\n\", %a);" )
          (expr2c method_name class_info) e
+
+    | IReturn e -> 
+       fprintf out "return %a;"
+        (expr2c method_name class_info) e
   in
   instr2c out ins
 
@@ -592,11 +597,7 @@ let method_definition2c
     : unit =
   let class_info = get_class_info class_name in
   let method_definition out (method_name, m) =
-    let return2c out e =
-      fprintf out "return (void*)(%a);"
-        (expr2c method_name class_info) e
-    in
-    fprintf out "void* %s_%s(struct %s* this%a) {%a%a%a\n}"
+    fprintf out "void* %s_%s(struct %s* this%a) {%a%a\n}"
       class_name
       method_name
       class_name
@@ -604,7 +605,6 @@ let method_definition2c
       (term_list semicolon (indent indentation decl2c))
       m.locals
       (list (indent indentation (instr2c method_name class_info))) m.body
-      (indent indentation return2c) m.return
   in
   fprintf out "%a"
     (sep_list nl method_definition)

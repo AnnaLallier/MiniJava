@@ -90,7 +90,6 @@ metho:
    RPAREN
    LBRACE
    ds = declarations_and_statements
-   RETURN e = expression SEMICOLON
    RBRACE
    {
      let d, s = fst ds, snd ds in
@@ -99,8 +98,7 @@ metho:
        formals = swap f;
        result  = t;
        locals  = d;
-       body    = s;
-       return  = e;
+          body    = s;
      }
    }
 
@@ -203,11 +201,14 @@ instruction:
 | WHILE LPAREN c = expression RPAREN i = instruction
    { IWhile (c, i) }
 
-| DO i1 = instruction WHILE LPAREN c = expression RPAREN SEMICOLON
-   { IDoWhile (i1, c) }
+| DO i1 = instruction WHILE LPAREN c = expression RPAREN i2 = instruction
+   { IDoWhile (i1, c, i2) }
 
 | FOR LPAREN e1 = expression SEMICOLON c = expression SEMICOLON e2 = expression RPAREN i = instruction
    { IFor (e1, c, e2, i) }
+
+| RETURN e = expression SEMICOLON
+   { IReturn e}
 
 block:
 | LBRACE is = list(instruction) RBRACE

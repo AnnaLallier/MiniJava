@@ -48,11 +48,12 @@ and instruction =
   | IBlock of instruction list (** [IBlock [i1; i2; ...; in]] represents the instruction [{ i1 i2 ... in }]. *)
   | IIf of expression * instruction * instruction (** [IIf (e, i1, i2)] represents the instruction [if (e) i1 else i2]. *)
   | IWhile of expression * instruction (** [IWhile (e, ins)] represents the instruction [while (e) ins]. *)
-  | IDoWhile of instruction * expression (** [IDoWhile (ins1, e)] represents the instruction [do ins1 while (e)]. *)
+  | IDoWhile of instruction * expression * instruction (** [IDoWhile (ins1, e, ins2)] represents the instruction [do ins1 while (e) ins2]. *)
   | IFor of expression * expression * expression * instruction (** [IFor (e, ins)] represents the instruction [for (e) ins]. *)
   | ISyso of expression (** [ISyso e] represents the instruction [System.out.println(e);]. *)
   | ISetVar of identifier * expression (** [ISetVar (id, e)] represents the instruction [id = e;]. *)
   | IArraySet of identifier * expression * expression (** [IArraySet (id, e1, e2)] represents the instruction [id[e1] = e2;]. *)
+  | IReturn of expression (** [IReturn e] represents the instruction [return e]*)
 
 and typ =
   | TypInt (** Type [int]. *)
@@ -69,7 +70,6 @@ and metho = {
   result: typ; (** Result type of the method. *)
   locals: (identifier * typ) list; (** The names of the local variables with their types (declared at the beginning of the method). *)
   body: instruction list; (** The list of instructions of the method. *)
-  return: expression (** The return expression. *)
 }
 
 and clas = {

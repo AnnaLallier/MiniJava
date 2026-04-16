@@ -1,8 +1,16 @@
 # TP1 MiniJava
 
-### Le  10/02/2026
+#### Du  10/02/2026 au ...
 
 Environ 5 points au DS. Mieux vaut faire jusqu'à if sans else, chaînes de caractères, opérateurs associés, etc.
+
+Rendu dans la semaine après le DS de Compilation.
+
+
+## Auteurs
+
+- Anna LALLIER
+- Maud RAMEL
 
 ## Références
 
@@ -59,6 +67,9 @@ Et après tout ça, on peut make, et on peut faire
     
     test/test.sh -a
 
+Tester le C avec mini-java :
+
+    ./mini-java ./test/good/Ackermann.java
 
 ## Instructions
 
@@ -78,11 +89,12 @@ Liste de choses à faire :
     float (fait)
     string (fait)
     interface
-    surcharge
+    surcharge : changer le nom des fonctions pour rendre un nom unique
     sysout (fait)
     lambda
+    return void pour les méthodes
 
-    return 
+    return (fait) -> vérifier que le type de retour est bon : method typecheck method & vérifier que une expression a forcément un retour
     break 
     continue
 
@@ -111,7 +123,7 @@ A chaque fois qu'on ajoute quelque chose, pour tester on fait
     make
     test/test.sh -a
 
-Quand ça en marche pas, il est utile de faire 
+Quand ça ne marche pas, il est utile de faire 
 
     ./mini-java ./test/good/TestEquals.java 
     Fatal error: exception File "mj2c.ml", line 298, characters 2-7: Pattern matching failed

@@ -31,6 +31,16 @@ let binop out = function
      fprintf out "&&"
   | OpGt -> 
      fprintf out ">"
+  | OpOr ->
+     fprintf out "||"
+  | OpOrBit ->
+     fprintf out "|"
+  | OpOrBitEx ->
+     fprintf out "^"
+  | OpBitwiseAnd ->
+     fprintf out "&"
+  | OpEquals ->
+     fprintf out "=="
 
 (** [expr out e], [expr0 out e], ..., [expr6 out e] print the expression [e]
     on the output channel [out]. [expr] is a synonym for [expr6].
@@ -141,6 +151,17 @@ let rec instr out = function
       fprintf out "while (%a) %a"
         expr c
         instr i
+  | IDoWhile (i1, c, i2) ->
+         fprintf out "do %a while (%a) %a"
+            instr i1
+            expr c
+            instr i2
+  | IFor (e1, c, e2, i) ->
+         fprintf out "for (%a; %a; %a) %a"
+            expr e1
+            expr c
+            expr e2
+            instr i
   | IBlock is ->
      fprintf out "{%a%t}"
        (indent indentation (sep_list nl instr)) is
@@ -148,11 +169,16 @@ let rec instr out = function
   | ISyso e ->
      fprintf out "System.out.println(%a);"
        expr e
+   | IReturn e ->
+       fprintf out "return %a;"
+          expr e
 
 (** [typ out t] prints the type [t] on the output channel [out]. *)
 let typ out = function
   | TypInt ->
      fprintf out "int"
+  | TypFloat ->
+     fprintf out "float"
   | TypBool ->
      fprintf out "boolean"
   | TypIntArray ->
@@ -169,13 +195,12 @@ let binding out (x, t) =
 
 (** [metho out (name, m)] prints the method [name] with type [MJ.metho m] on the output channel [out]. *)
 let metho out (name, m) =
-  fprintf out "public %a %s(%a) {%a%a%t%t}"
+   fprintf out "public %a %s(%a) {%a%a%t}"
     typ m.result
     name
     (sep_list comma binding) m.formals
     (term_list semicolon (indent indentation binding)) m.locals
     (list (indent indentation instr)) m.body
-    (indent_t indentation (fun out -> fprintf out "return %a;" expr m.return))
     nl
 
 (** [clas out (name, c)] prints the clas [name] with type [MJ.clas c] on the output channel [out]. *)

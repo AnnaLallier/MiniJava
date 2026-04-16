@@ -255,13 +255,15 @@ and typecheck_expression (cenv : class_env) (venv : variable_env) (vinit : S.t)
       clookup id cenv |> ignore;
       mke (TMJ.EObjectAlloc (Location.content id)) (Typ id)
 
-(** [typecheck_instruction cenv venv vinit instanceof inst] checks, using the environments [cenv] and
-    [venv], the set of initialized variables [vinit] and the [instanceof] function,
-    that the instruction [inst] is well typed.
-    If [typecheck_instruction] succeeds, the new set of initialized variables is returned. *)
-let rec typecheck_instruction (cenv : class_env) (venv : variable_env) (vinit : S.t)
+(** [typecheck_instruction cenv venv vinit instanceof expected_return inst] checks, using the
+    environments [cenv] and [venv], the set of initialized variables [vinit] and
+    the [instanceof] function, that the instruction [inst] is well typed.
+    It returns the typed instruction, the new set of initialized variables and a
+    flag indicating if [inst] always returns. *)
+let rec typecheck_instruction (cenv : class_env) (venv : variable_env) (vinit : S.t) 
     (instanceof : identifier -> identifier -> bool)
-    (inst : instruction) : (TMJ.instruction * S.t) =
+    (expected_return : typ option)
+    (inst : instruction) : (TMJ.instruction * S.t * bool) =
   match inst with
   | ISetVar (v, e) ->
       let vinit =
@@ -269,7 +271,7 @@ let rec typecheck_instruction (cenv : class_env) (venv : variable_env) (vinit : 
       in
       let typ = vlookup v venv in
       let e' = typecheck_expression_expecting cenv venv vinit instanceof typ e in
-      (TMJ.ISetVar (Location.content v, type_lmj_to_tmj typ, e'), vinit)
+      (TMJ.ISetVar (Location.content v, type_lmj_to_tmj typ, e'), vinit, false)
 
   | IArraySet (earray, eindex, evalue) ->
       typecheck_expression cenv venv vinit instanceof 
@@ -277,49 +279,71 @@ let rec typecheck_instruction (cenv : class_env) (venv : variable_env) (vinit : 
       |> ignore;
       let eindex' = typecheck_expression cenv venv vinit instanceof eindex in
       let evalue' = typecheck_expression cenv venv vinit instanceof evalue in
-      (TMJ.IArraySet (Location.content earray, eindex', evalue'), vinit)
+      (TMJ.IArraySet (Location.content earray, eindex', evalue'), vinit, false)
 
   | IBlock instructions ->
-      let instructions', vinit =
+      let instructions', vinit, always_returns =
         List.fold_left
-          (fun (acc, vinit) inst ->
-          let inst, vinit = typecheck_instruction cenv venv vinit instanceof inst in
-          (inst :: acc, vinit))
-        ([], vinit)
+          (fun (acc, vinit, already_returns) inst ->
+             if already_returns then
+               (acc, vinit, true)
+             else
+               let inst', vinit', returns' =
+                 typecheck_instruction cenv venv vinit instanceof expected_return inst
+               in
+               (inst' :: acc, vinit', returns'))
+        ([], vinit, false)
         instructions
       in
-      (TMJ.IBlock (List.rev instructions'), vinit)
+      (TMJ.IBlock (List.rev instructions'), vinit, always_returns)
 
   | IIf (cond, ithen, ielse) ->
       let cond' = typecheck_expression_expecting cenv venv vinit instanceof TypBool cond in
-      let ithen', vinit1 =
-        typecheck_instruction cenv venv vinit instanceof ithen
+      let ithen', vinit1, ret1 =
+        typecheck_instruction cenv venv vinit instanceof expected_return ithen
       in
-      let ielse', vinit2 =
-        typecheck_instruction cenv venv vinit instanceof ielse
+      let ielse', vinit2, ret2 =
+        typecheck_instruction cenv venv vinit instanceof expected_return ielse
       in
-      (TMJ.IIf (cond', ithen', ielse'), S.inter vinit1 vinit2)
+      (TMJ.IIf (cond', ithen', ielse'), S.inter vinit1 vinit2, ret1 && ret2)
 
   | IWhile (cond, ibody) ->
       let cond' = typecheck_expression_expecting cenv venv vinit instanceof TypBool cond in
-      let ibody', vinit = typecheck_instruction cenv venv vinit instanceof ibody in
-      (TMJ.IWhile (cond', ibody'), vinit)
+      let ibody', _, _ = typecheck_instruction cenv venv vinit instanceof expected_return ibody in
+      (TMJ.IWhile (cond', ibody'), vinit, false)
 
+
+  (**Branche Maud, commenté lors du Merge, voir si ça pause problème
   | IDoWhile (ibody1, cond) ->
       let ibody1', vinit = typecheck_instruction cenv venv vinit instanceof ibody1 in
       let cond' = typecheck_expression_expecting cenv venv vinit instanceof TypBool cond in
-      (TMJ.IDoWhile (ibody1', cond'), vinit)
+      (TMJ.IDoWhile (ibody1', cond'), vinit)**)
+  | IDoWhile (ibody1, cond, ibody2) ->
+      let ibody1', vinit1, _ = typecheck_instruction cenv venv vinit instanceof expected_return ibody1 in
+      let cond' = typecheck_expression_expecting cenv venv vinit1 instanceof TypBool cond in
+      let ibody2', vinit2, _ = typecheck_instruction cenv venv vinit1 instanceof expected_return ibody2 in
+      (TMJ.IDoWhile (ibody1', cond', ibody2'), vinit2, false)
 
   | IFor (id1, cond, id2, ibody) ->
       let id1' = typecheck_expression_expecting cenv venv vinit instanceof TypBool id1 in
       let cond' = typecheck_expression_expecting cenv venv vinit instanceof TypBool cond in
       let id2' = typecheck_expression_expecting cenv venv vinit instanceof TypBool id2 in
-      let ibody', vinit = typecheck_instruction cenv venv vinit instanceof ibody in
-      (TMJ.IFor (id1', cond', id2', ibody'), vinit)
+      let ibody', _, _ = typecheck_instruction cenv venv vinit instanceof expected_return ibody in
+      (TMJ.IFor (id1', cond', id2', ibody'), vinit, false)
 
   | ISyso e ->
-     let e' = typecheck_expression cenv venv vinit instanceof e in
-        (TMJ.ISyso e', vinit)
+     let e' = typecheck_expression_expecting cenv venv vinit instanceof TypInt e in
+      (TMJ.ISyso e', vinit, false)
+  
+  | IReturn e ->
+      begin
+        match expected_return with
+        | None ->
+            error e "Return is not allowed here"
+        | Some return_typ ->
+            let e' = typecheck_expression_expecting cenv venv vinit instanceof return_typ e in
+            (TMJ.IReturn e', vinit, true)
+      end
 
 (** [occurences x bindings] returns the elements in [bindings] that have [x] has identifier. *)
 let occurrences (x : string) (bindings : (identifier * 'a) list) : identifier list =
@@ -376,18 +400,21 @@ let typecheck_method (cenv : class_env) (venv : variable_env)
   let vinit =
     S.diff (SM.domain venv) (SM.domain mlocals)
   in
-  let body', vinit =
-    match typecheck_instruction cenv venv vinit instanceof (IBlock m.body) with 
-    | IBlock body', vinit -> body', vinit 
+
+  let body', _, always_returns =
+    match typecheck_instruction cenv venv vinit instanceof (Some m.result) (IBlock m.body) with
+    | TMJ.IBlock body', vinit', always_returns -> body', vinit', always_returns
     | _ -> assert false
   in
-  let return' = typecheck_expression_expecting cenv venv vinit instanceof m.result m.return in
+
+  if not always_returns then
+    errors [] "This method may exit without returning a value";
+
   TMJ.{
     formals = List.map (fun (id, typ) -> Location.content id, type_lmj_to_tmj typ) m.formals;
     result  = type_lmj_to_tmj m.result;
     locals  = List.map (fun (id, typ) -> Location.content id, type_lmj_to_tmj typ) m.locals;
     body    = body';
-    return  = return'
   }
 
 (** [typecheck_class cenv instanceof (name, c)] checks, using the environments [cenv] and [venv]
@@ -527,6 +554,10 @@ let typecheck_program (p : program) : TMJ.program =
     name = Location.content p.name;
     defs = defs';
     main_args = Location.content p.main_args;
-    main      = fst (typecheck_instruction cenv venv S.empty instanceof p.main)
+    main = 
+    let main', _, _ =
+      typecheck_instruction cenv venv S.empty instanceof None p.main
+    in
+    main'
   }
   
